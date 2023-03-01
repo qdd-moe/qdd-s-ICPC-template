@@ -23,7 +23,6 @@ bool ge(ld x, ld y) { return sgn(x - y) >= 0; }
 struct V {
   ld x, y;
   constexpr V(ld x = 0, ld y = 0) : x(x), y(y) {}
-  constexpr V(const V& a, const V& b) : x(b.x - a.x), y(b.y - a.y) {}
   V operator+(const V& b) const { return V(x + b.x, y + b.y); }
   V operator-(const V& b) const { return V(x - b.x, y - b.y); }
   V operator*(ld k) const { return V(x * k, y * k); }
@@ -38,7 +37,7 @@ istream& operator>>(istream& is, V& p) { return is >> p.x >> p.y; }
 ld dist(const V& a, const V& b) { return (b - a).len(); }
 ld dot(const V& a, const V& b) { return a.x * b.x + a.y * b.y; }
 ld det(const V& a, const V& b) { return a.x * b.y - a.y * b.x; }
-ld cross(const V& s, const V& t, const V& o) { return det(V(o, s), V(o, t)); }
+ld cross(const V& s, const V& t, const V& o) { return det(s - o, t - o); }
 
 ld to_rad(ld deg) { return deg / 180 * PI; }
 
@@ -262,7 +261,7 @@ vector<V> tangent_point(const C& c, const V& p) {
   ld k = c.r / dist(c.o, p);
   if (gt(k, 1)) return vector<V>();
   if (eq(k, 1)) return {p};
-  V a = V(c.o, p) * k;
+  V a = (p - c.o) * k;
   return {c.o + rot(a, acos(k)), c.o + rot(a, -acos(k))};
 }
 
@@ -293,7 +292,6 @@ C min_circle_cover(vector<V> a) {
 struct V {
   ld x, y, z;
   constexpr V(ld x = 0, ld y = 0, ld z = 0) : x(x), y(y), z(z) {}
-  constexpr V(const V& a, const V& b) : x(b.x - a.x), y(b.y - a.y), z(b.z - a.z) {}
   V operator+(const V& b) const { return V(x + b.x, y + b.y, z + b.z); }
   V operator-(const V& b) const { return V(x - b.x, y - b.y, z - b.z); }
   V operator*(ld k) const { return V(x * k, y * k, z * k); }
@@ -308,6 +306,6 @@ istream& operator>>(istream& is, V& p) { return is >> p.x >> p.y >> p.z; }
 ld dist(const V& a, const V& b) { return (b - a).len(); }
 ld dot(const V& a, const V& b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
 V det(const V& a, const V& b) { return V(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x); }
-V cross(const V& s, const V& t, const V& o) { return det(V(o, s), V(o, t)); }
+V cross(const V& s, const V& t, const V& o) { return det(s - o, t - o); }
 ld mix(const V& a, const V& b, const V& c) { return dot(a, det(b, c)); }
 ```
