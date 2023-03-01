@@ -23,26 +23,26 @@ bool ge(ld x, ld y) { return sgn(x - y) >= 0; }
 struct V {
   ld x, y;
   constexpr V(ld x = 0, ld y = 0) : x(x), y(y) {}
-  V operator+(const V& b) const { return V(x + b.x, y + b.y); }
-  V operator-(const V& b) const { return V(x - b.x, y - b.y); }
+  V operator+(V b) const { return V(x + b.x, y + b.y); }
+  V operator-(V b) const { return V(x - b.x, y - b.y); }
   V operator*(ld k) const { return V(x * k, y * k); }
   V operator/(ld k) const { return V(x / k, y / k); }
   ld len() const { return hypot(x, y); }
   ld len2() const { return x * x + y * y; }
 };
 
-ostream& operator<<(ostream& os, const V& p) { return os << "(" << p.x << ", " << p.y << ")"; }
+ostream& operator<<(ostream& os, V p) { return os << "(" << p.x << ", " << p.y << ")"; }
 istream& operator>>(istream& is, V& p) { return is >> p.x >> p.y; }
 
-ld dist(const V& a, const V& b) { return (b - a).len(); }
-ld dot(const V& a, const V& b) { return a.x * b.x + a.y * b.y; }
-ld det(const V& a, const V& b) { return a.x * b.y - a.y * b.x; }
-ld cross(const V& s, const V& t, const V& o) { return det(s - o, t - o); }
+ld dist(V a, V b) { return (b - a).len(); }
+ld dot(V a, V b) { return a.x * b.x + a.y * b.y; }
+ld det(V a, V b) { return a.x * b.y - a.y * b.x; }
+ld cross(V s, V t, V o) { return det(s - o, t - o); }
 
 ld to_rad(ld deg) { return deg / 180 * PI; }
 
 // 象限
-int quad(const V& p) {
+int quad(V p) {
   int x = sgn(p.x), y = sgn(p.y);
   if (x > 0 && y >= 0) return 1;
   if (x <= 0 && y > 0) return 2;
@@ -54,8 +54,8 @@ int quad(const V& p) {
 // 极角排序
 struct cmp_angle {
   V p;
-  cmp_angle(const V& p = V()) : p(p) {}
-  bool operator () (const V& a, const V& b) const {
+  cmp_angle(V p = V()) : p(p) {}
+  bool operator () (V a, V b) const {
     int qa = quad(a - p), qb = quad(b - p);
     if (qa != qb) return qa < qb;
     int d = sgn(cross(a, b, p));
@@ -65,74 +65,74 @@ struct cmp_angle {
 };
 
 // 单位向量
-V unit(const V& p) { return eq(p.len(), 0) ? V(1, 0) : p / p.len(); }
+V unit(V p) { return eq(p.len(), 0) ? V(1, 0) : p / p.len(); }
 
 // 逆时针旋转 r 弧度
-V rot(const V& p, ld r) {
+V rot(V p, ld r) {
   return V(p.x * cos(r) - p.y * sin(r), p.x * sin(r) + p.y * cos(r));
 }
-V rot_ccw90(const V& p) { return V(-p.y, p.x); }
-V rot_cw90(const V& p) { return V(p.y, -p.x); }
+V rot_ccw90(V p) { return V(-p.y, p.x); }
+V rot_cw90(V p) { return V(p.y, -p.x); }
 
 // 点在线段上 le(dot(...), 0) 包含端点 lt(dot(...), 0) 则不包含
-bool p_on_seg(const V& p, const V& a, const V& b) {
+bool p_on_seg(V p, V a, V b) {
   return eq(det(p - a, b - a), 0) && le(dot(p - a, p - b), 0);
 }
 
 // 点在射线上 ge(dot(...), 0) 包含端点 gt(dot(...), 0) 则不包含
-bool p_on_ray(const V& p, const V& a, const V& b) {
+bool p_on_ray(V p, V a, V b) {
   return eq(det(p - a, b - a), 0) && ge(dot(p - a, b - a), 0);
 }
 
 // 求直线交点
-V intersect(const V& a, const V& b, const V& c, const V& d) {
+V intersect(V a, V b, V c, V d) {
   ld s1 = cross(c, d, a), s2 = cross(c, d, b);
   return (a * s2 - b * s1) / (s2 - s1);
 }
 
 // 点在直线上的投影点
-V proj(const V& p, const V& a, const V& b) {
+V proj(V p, V a, V b) {
   return a + (b - a) * dot(b - a, p - a) / (b - a).len2();
 }
 
 // 点关于直线的对称点
-V reflect(const V& p, const V& a, const V& b) {
+V reflect(V p, V a, V b) {
   return proj(p, a, b) * 2 - p;
 }
 
 // 点到线段的最近点
-V closest_point_on_seg(const V& p, const V& a, const V& b) {
+V closest_point_on_seg(V p, V a, V b) {
   if (lt(dot(b - a, p - a), 0)) return a;
   if (lt(dot(a - b, p - b), 0)) return b;
   return proj(p, a, b);
 }
 
 // 三角形重心
-V centroid(const V& a, const V& b, const V& c) {
+V centroid(V a, V b, V c) {
   return (a + b + c) / 3;
 }
 
 // 内心
-V incenter(const V& a, const V& b, const V& c) {
+V incenter(V a, V b, V c) {
   ld AB = dist(a, b), AC = dist(a, c), BC = dist(b, c);
   // ld r = abs(cross(b, c, a)) / (AB + AC + BC);
   return (a * BC + b * AC + c * AB) / (AB + BC + AC);
 }
 
 // 外心
-V circumcenter(const V& a, const V& b, const V& c) {
+V circumcenter(V a, V b, V c) {
   V mid1 = (a + b) / 2, mid2 = (a + c) / 2;
   // ld r = dist(a, b) * dist(b, c) * dist(c, a) / 2 / abs(cross(b, c, a));
   return intersect(mid1, mid1 + rot_ccw90(b - a), mid2, mid2 + rot_ccw90(c - a));
 }
 
 // 垂心
-V orthocenter(const V& a, const V& b, const V& c) {
+V orthocenter(V a, V b, V c) {
   return centroid(a, b, c) * 3 - circumcenter(a, b, c) * 2;
 }
 
 // 旁心（三个）
-vector<V> escenter(const V& a, const V& b, const V& c) {
+vector<V> escenter(V a, V b, V c) {
   ld AB = dist(a, b), AC = dist(a, c), BC = dist(b, c);
   V p1 = (a * (-BC) + b * AC + c * AB) / (AB + AC - BC);
   V p2 = (a * BC + b * (-AC) + c * AB) / (AB - AC + BC);
@@ -164,7 +164,7 @@ V centroid(const vector<V>& s) {
 
 // 点是否在多边形中
 // 1 inside 0 on border -1 outside
-int inside(const vector<V>& s, const V& p) {
+int inside(const vector<V>& s, V p) {
   int cnt = 0;
   for (int i = 0; i < s.size(); i++) {
     V a = s[i], b = s[(i + 1) % s.size()];
@@ -208,7 +208,7 @@ bool is_convex(const vector<V>& s) {
 
 // 点是否在凸包中
 // 1 inside 0 on border -1 outside
-int inside(const vector<V>& s, const V& p) {
+int inside(const vector<V>& s, V p) {
   for (int i = 0; i < s.size(); i++) {
     if (lt(cross(s[i], s[(i + 1) % s.size()], p), 0)) return -1;
     if (p_on_seg(p, s[i], s[(i + 1) % s.size()])) return 0;
@@ -234,7 +234,7 @@ ld min_dist(const vector<V>& s, int l, int r) {
   for (int i = l; i < r; i++) {
     if (abs(s[i].x - s[m].x) <= ret) q.push_back(s[i]);
   }
-  sort(q.begin(), q.end(), [](const V& a, const V& b) { return a.y < b.y; });
+  sort(q.begin(), q.end(), [](auto& a, auto& b) { return a.y < b.y; });
   for (int i = 1; i < q.size(); i++) {
     for (int j = i - 1; j >= 0 && q[j].y >= q[i].y - ret; j--) {
       ret = min(ret, dist(q[i], q[j]));
@@ -250,14 +250,14 @@ ld min_dist(const vector<V>& s, int l, int r) {
 struct C {
   V o;
   ld r;
-  C(const V& o, ld r) : o(o), r(r) {}
+  C(V o, ld r) : o(o), r(r) {}
 };
 
 // 扇形面积，半径 r 圆心角 d
 ld area_sector(ld r, ld d) { return r * r * d / 2; }
 
 // 过一点求圆的切线，返回切点
-vector<V> tangent_point(const C& c, const V& p) {
+vector<V> tangent_point(C c, V p) {
   ld k = c.r / dist(c.o, p);
   if (gt(k, 1)) return vector<V>();
   if (eq(k, 1)) return {p};
@@ -292,20 +292,20 @@ C min_circle_cover(vector<V> a) {
 struct V {
   ld x, y, z;
   constexpr V(ld x = 0, ld y = 0, ld z = 0) : x(x), y(y), z(z) {}
-  V operator+(const V& b) const { return V(x + b.x, y + b.y, z + b.z); }
-  V operator-(const V& b) const { return V(x - b.x, y - b.y, z - b.z); }
+  V operator+(V b) const { return V(x + b.x, y + b.y, z + b.z); }
+  V operator-(V b) const { return V(x - b.x, y - b.y, z - b.z); }
   V operator*(ld k) const { return V(x * k, y * k, z * k); }
   V operator/(ld k) const { return V(x / k, y / k, z / k); }
   ld len() const { return sqrt(len2()); }
   ld len2() const { return x * x + y * y + z * z; }
 };
 
-ostream& operator<<(ostream& os, const V& p) { return os << "(" << p.x << "," << p.y << "," << p.z << ")"; }
+ostream& operator<<(ostream& os, V p) { return os << "(" << p.x << "," << p.y << "," << p.z << ")"; }
 istream& operator>>(istream& is, V& p) { return is >> p.x >> p.y >> p.z; }
 
-ld dist(const V& a, const V& b) { return (b - a).len(); }
-ld dot(const V& a, const V& b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
-V det(const V& a, const V& b) { return V(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x); }
-V cross(const V& s, const V& t, const V& o) { return det(s - o, t - o); }
-ld mix(const V& a, const V& b, const V& c) { return dot(a, det(b, c)); }
+ld dist(V a, V b) { return (b - a).len(); }
+ld dot(V a, V b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
+V det(V a, V b) { return V(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x); }
+V cross(V s, V t, V o) { return det(s - o, t - o); }
+ld mix(V a, V b, V c) { return dot(a, det(b, c)); }
 ```
