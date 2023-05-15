@@ -260,22 +260,27 @@ ll range_sum(int x, int y, int xx, int yy) {
 ```cpp
 // 下标从1开始
 // 必要时使用 const S& 卡常数
+template <class S>
 struct segtree {
-  using S = int;
+  using OP = S (*)(S, S);
+  using E = S (*)();
 
   int _n, size;
   vector<S> d;
 
+  const OP op;
+  const E e;
+
   void pull(int p) { d[p] = op(d[p * 2], d[p * 2 + 1]); }
 
-  segtree(int n) : _n(n) {
+  segtree(int n, OP op, E e) : _n(n), op(op), e(e) {
     size = 1;
     while (size < n) size <<= 1;
     d.assign(2 * size, e());
   }
 
   template <class I>
-  segtree(I first, I last) : segtree(last - first) {
+  segtree(I first, I last, OP op, E e) : segtree(last - first, op, e) {
     copy(first, last, d.begin() + size);
     for (int i = size - 1; i >= 1; i--) pull(i);
   }
@@ -296,9 +301,6 @@ struct segtree {
 
   S get(int p) { return d[p + size - 1]; }
   S query(int l, int r) { return ask(l, r, 1, 1, size); }
-
-  S op(S a, S b) { return max(a, b); }
-  S e() { return -INF; }
 
   // f(e()) = false
   // find the smallest r such that f(sum([l...r])) = true
@@ -347,6 +349,11 @@ struct segtree {
     return 0;
   }
 };
+
+auto op = [](int a, int b) { return max(a, b); };
+auto e = []() { return -INF; };
+
+segtree<int> seg(n, op, e);
 ```
 
 + 权值线段树：单点修改，第k大
@@ -367,17 +374,27 @@ S e() { return 0; }
 + 区间加，区间和
 
 ```cpp
+template <class S, class F>
 struct lazy_segtree {
 #define args int p, int l, int r
 #define lc p * 2, l, (l + r) >> 1
 #define rc p * 2 + 1, ((l + r) >> 1) + 1, r
 
-  using S = int;
-  using F = int;
+  using OP = S (*)(S, S);
+  using E = S (*)();
+  using MAP = S (*)(S, F, int, int);
+  using COM = F (*)(F, F);
+  using ID = F (*)();
 
   int _n, size, log;
   vector<S> d;
   vector<F> lz;
+
+  const OP op;
+  const E e;
+  const MAP mapping;
+  const COM composition;
+  const ID id;
 
   void pull(int p) { d[p] = op(d[p * 2], d[p * 2 + 1]); }
 
@@ -418,7 +435,8 @@ struct lazy_segtree {
 #undef lc
 #undef rc
 
-  lazy_segtree(int n) : _n(n) {
+  lazy_segtree(int n, OP op, E e, MAP mapping, COM composition, ID id)
+      : _n(n), op(op), e(e), mapping(mapping), composition(composition), id(id) {
     size = 1, log = 0;
     while (size < n) size <<= 1, log++;
     d.assign(2 * size, e());
@@ -426,19 +444,14 @@ struct lazy_segtree {
   }
 
   template <class I>
-  lazy_segtree(I first, I last) : lazy_segtree(last - first) {
+  lazy_segtree(I first, I last, OP op, E e, MAP mapping, COM composition, ID id)
+      : lazy_segtree(last - first, op, e, mapping, composition, id) {
     copy(first, last, d.begin() + size);
     for (int i = size - 1; i >= 1; i--) pull(i);
   }
 
   void update(int l, int r, F f) { modify(l, r, f, 1, 1, size); }
   S query(int l, int r) { return ask(l, r, 1, 1, size); }
-
-  S op(S a, S b) { return a + b; }
-  S e() { return 0; }
-  S mapping(S a, F f, int l, int r) { return a + f * (r - l + 1); }
-  F composition(F f, F g) { return f + g; }  // f：外层函数 g：内层函数
-  F id() { return 0; }  // 如果是区间赋值，选取一个数据范围外的值
 
   // for binary search
   void push(int p) {
@@ -497,11 +510,20 @@ struct lazy_segtree {
     return 0;
   }
 };
+
+auto op = [](ll a, ll b) { return a + b; };
+auto e = []() { return 0LL; };
+auto mapping = [](ll a, ll f, int l, int r) { return a + f * (r - l + 1); };
+auto composition = [](ll f, ll g) { return f + g; };  // f：外层函数 g：内层函数
+auto id = []() { return 0LL; };  // 如果是区间赋值，选取一个数据范围外的值
+
+lazy_segtree<ll, ll> seg(n, op, e, mapping, composition, id);
 ```
 
 + 区间乘混加，区间和取模
 
 ```cpp
+// S = ll, F = pair<ll, ll>
 S op(S a, S b) { return (a + b) % P; }
 S e() { return 0; }
 S mapping(S a, F f, int l, int r) { return (a * f.first % P + (r - l + 1) * f.second % P) % P; }
