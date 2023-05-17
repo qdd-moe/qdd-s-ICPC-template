@@ -356,21 +356,6 @@ auto e = []() { return -INF; };
 segtree<int> seg(n, op, e);
 ```
 
-+ 权值线段树：单点修改，第k大
-
-```cpp
-int ask(ll k, int p, int l, int r) {
-  if (l == r) return l;
-  if (d[p * 2] >= k) return ask(k, p * 2, l, (l + r) >> 1);
-  return ask(k - d[p * 2], p * 2 + 1, ((l + r) >> 1) + 1, r);
-}
-
-int query(ll k) { return ask(k, 1, 1, size); }
-
-S op(S a, S b) { return a + b; }
-S e() { return 0; }
-```
-
 + 区间加，区间和
 
 ```cpp
