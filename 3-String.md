@@ -3,8 +3,16 @@
 ### 哈希
 
 ```cpp
-// open hack不要用哈希
-// 适合哈希的素数：1572869, 3145739, 6291469, 12582917, 25165843, 50331653
+// open hack
+mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
+
+ll random_prime(ll l, ll r) {
+  for (;;) {
+    ll x = rng() % (r - l + 1) + l;
+    if (isprime(x)) return x;
+  }
+}
+
 const int x = 135, p = 1e9 + 9;
 
 ll xp[N];
