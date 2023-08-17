@@ -238,11 +238,11 @@ struct Dinic {
 
   int dfs(int u, int cap) {
     if (u == t || cap == 0) return cap;
-    int tmp = cap, f;
+    int tmp = cap;
     for (int& i = cur[u]; i < (int)g[u].size(); i++) {
       Edge& e = es[g[u][i]];
       if (dis[e.to] == dis[u] + 1) {
-        f = dfs(e.to, min(cap, e.cap));
+        int f = dfs(e.to, min(cap, e.cap));
         e.cap -= f;
         es[g[u][i] ^ 1].cap += f;
         cap -= f;
