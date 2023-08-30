@@ -136,20 +136,17 @@ bool topo(vector<int>& ans) {
 ```cpp
 // 前置：并查集
 struct Edge {
-  int from, to, val;
-  Edge(int from = 0, int to = 0, int val = 0) : from(from), to(to), val(val) {}
+  int u, v, w;
+  Edge(int u = 0, int v = 0, int w = 0) : u(u), v(v), w(w) {}
 };
 
-vector<Edge> es;
-
-ll kruskal() {
-  sort(es.begin(), es.end(), [](Edge& x, Edge& y) { return x.val < y.val; });
-  iota(pa, pa + n + 1, 0);
+ll kruskal(vector<Edge>& es, int n) {
+  sort(es.begin(), es.end(), [](Edge& x, Edge& y) { return x.w < y.w; });
+  dsu d(n + 1);
   ll ans = 0;
   for (Edge& e : es) {
-    if (find(e.from) != find(e.to)) {
-      merge(e.from, e.to);
-      ans += e.val;
+    if (d.merge(e.u, e.v)) {
+      ans += e.w;
     }
   }
   return ans;
