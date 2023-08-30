@@ -41,20 +41,24 @@ void merge(int x, int y) {
 ```cpp
 // 下标从0开始
 struct RMQ {
-  int st[22][N];  // 22 = ((int)log2(N) + 1)
+  vector<vector<int>> st;
 
-  void init(int *a, int n) {
-    copy(a, a + n, st[0]);
-    for (int i = 1; (1 << i) <= n; i++) {
-      for (int j = 0; j + (1 << i) - 1 < n; j++) {
-        st[i][j] = max(st[i - 1][j], st[i - 1][j + (1 << (i - 1))]);
+  RMQ(const vector<int>& a) {
+    int n = a.size();
+    st.assign(__lg(n) + 1, vector<int>(n));
+    for (int i = 0; i < n; i++) {
+      st[0][i] = a[i];
+    }
+    for (int k = 1; (1 << k) <= n; k++) {
+      for (int i = 0; i + (1 << k) <= n; i++) {
+        st[k][i] = max(st[k - 1][i], st[k - 1][i + (1 << (k - 1))]);
       }
     }
   }
 
   int query(int l, int r) {
-    int x = __lg(r - l + 1);
-    return max(st[x][l], st[x][r - (1 << x) + 1]);
+    int k = __lg(r - l + 1);
+    return max(st[k][l], st[k][r - (1 << k) + 1]);
   }
 };
 ```
