@@ -157,12 +157,13 @@ ll kruskal(vector<Edge>& es, int n) {
 
 ```cpp
 // dfs(1, 0) or dfs(0, n), don't use dfs(0, -1)
-int dep[N], up[N][22]; // 22 = ((int)log2(N) + 1)
+const int LOG = 22;  // 22 = ((int)log2(N) + 1)
+int dep[N], up[N][LOG];
 
 void dfs(int u, int pa) {
   dep[u] = dep[pa] + 1;
   up[u][0] = pa;
-  for (int i = 1; i < 22; i++) {
+  for (int i = 1; i < LOG; i++) {
     up[u][i] = up[up[u][i - 1]][i - 1];
   }
   for (int v : g[u]) {
@@ -173,11 +174,11 @@ void dfs(int u, int pa) {
 int lca(int u, int v) {
   if (dep[u] > dep[v]) swap(u, v);
   int t = dep[v] - dep[u];
-  for (int i = 0; i < 22; i++) {
+  for (int i = 0; i < LOG; i++) {
     if ((t >> i) & 1) v = up[v][i];
   }
   if (u == v) return u;
-  for (int i = 21; i >= 0; i--) {
+  for (int i = LOG - 1; i >= 0; i--) {
     if (up[u][i] != up[v][i]) {
       u = up[u][i];
       v = up[v][i];
@@ -556,7 +557,8 @@ void two_sat() {
 
 ```cpp
 // rt是g中入度为0的点（可能需要建超级源点）
-int n, deg[N], dep[N], up[N][22];
+const int LOG = 22;
+int n, deg[N], dep[N], up[N][LOG];
 vector<int> g[N], rg[N], dt[N];
 
 bool topo(vector<int>& ans, int rt) {
@@ -577,11 +579,11 @@ bool topo(vector<int>& ans, int rt) {
 int lca(int u, int v) {
   if (dep[u] > dep[v]) swap(u, v);
   int t = dep[v] - dep[u];
-  for (int i = 0; i < 22; i++) {
+  for (int i = 0; i < LOG; i++) {
     if ((t >> i) & 1) v = up[v][i];
   }
   if (u == v) return u;
-  for (int i = 21; i >= 0; i--) {
+  for (int i = LOG - 1; i >= 0; i--) {
     if (up[u][i] != up[v][i]) {
       u = up[u][i];
       v = up[v][i];
@@ -602,7 +604,7 @@ void go(int rt) {
     dt[pa].push_back(u);
     dep[u] = dep[pa] + 1;
     up[u][0] = pa;
-    for (int i = 1; i < 22; i++) {
+    for (int i = 1; i < LOG; i++) {
       up[u][i] = up[up[u][i - 1]][i - 1];
     }
   }
