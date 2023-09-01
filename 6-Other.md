@@ -494,22 +494,40 @@ struct heap {
 ### 分数
 
 ```cpp
+template <class T>
 struct Frac {
-  ll x, y;
+  T x, y;
 
-  Frac(ll p = 0, ll q = 1) {
-    ll d = __gcd(p, q);
-    x = p / d, y = q / d;
-    if (y < 0) x = -x, y = -y;
+  Frac(const T& p = 0, const T& q = 1) {
+    T d = gcd(p, q);
+    x = p / d;
+    y = q / d;
+    if (y < 0) {
+      x = -x;
+      y = -y;
+    }
   }
 
-  Frac operator + (const Frac& b) { return Frac(x * b.y + y * b.x, y * b.y); }
-  Frac operator - (const Frac& b) { return Frac(x * b.y - y * b.x, y * b.y); }
-  Frac operator * (const Frac& b) { return Frac(x * b.x, y * b.y); }
-  Frac operator / (const Frac& b) { return Frac(x * b.y, y * b.x); }
+  Frac operator+(const Frac& b) { return Frac(x * b.y + y * b.x, y * b.y); }
+  Frac operator-(const Frac& b) { return Frac(x * b.y - y * b.x, y * b.y); }
+  Frac operator*(const Frac& b) { return Frac(x * b.x, y * b.y); }
+  Frac operator/(const Frac& b) { return Frac(x * b.y, y * b.x); }
+
+  bool operator==(const Frac& b) { return x * b.y == y * b.x; }
+  bool operator!=(const Frac& b) { return !(*this == b); }
+  bool operator<(const Frac& b) { return x * b.y < y * b.x; }
+  bool operator>(const Frac& b) { return x * b.y > y * b.x; }
+  bool operator<=(const Frac& b) { return !(*this > b); }
+  bool operator>=(const Frac& b) { return !(*this < b); }
+
+  Frac& operator+=(const Frac& b) { *this = *this + b; return *this; }
+  Frac& operator-=(const Frac& b) { *this = *this - b; return *this; }
+  Frac& operator*=(const Frac& b) { *this = *this * b; return *this; }
+  Frac& operator/=(const Frac& b) { *this = *this / b; return *this; }
 };
 
-ostream& operator << (ostream& os, const Frac& f) {
+template <class T>
+ostream& operator<<(ostream& os, const Frac<T>& f) {
   if (f.y == 1) return os << f.x;
   else return os << f.x << '/' << f.y;
 }
