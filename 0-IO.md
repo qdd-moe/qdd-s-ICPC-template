@@ -82,31 +82,33 @@ class Scanner {
   }
 
 public:
-  string next() {
-    string s;
+  Scanner& operator>>(string& s) {
+    s.clear();
     char c = nc();
     while (c <= 32) c = nc();
     for (; c > 32; c = nc()) s += c;
-    return s;
+    return *this;
   }
 
-  int nextInt() {
-    int x = 0, sgn = 1;
-    char c = nc();
-    for (; c < '0' || c > '9'; c = nc()) if (c == '-') sgn = -1;
-    for (; c >= '0' && c <= '9'; c = nc()) x = x * 10 + (c - '0');
-    return sgn * x;
-  }
-
-  double nextDouble() {
-    double x = 0, base = 0.1;
+  Scanner& operator>>(int& x) {
+    x = 0;
     int sgn = 1;
     char c = nc();
     for (; c < '0' || c > '9'; c = nc()) if (c == '-') sgn = -1;
     for (; c >= '0' && c <= '9'; c = nc()) x = x * 10 + (c - '0');
-    for (; c < '0' || c > '9'; c = nc()) if (c != '.') return sgn * x;
+    return x *= sgn, *this;
+  }
+
+  Scanner& operator>>(double& x) {
+    x = 0;
+    double base = 0.1;
+    int sgn = 1;
+    char c = nc();
+    for (; c < '0' || c > '9'; c = nc()) if (c == '-') sgn = -1;
+    for (; c >= '0' && c <= '9'; c = nc()) x = x * 10 + (c - '0');
+    for (; c < '0' || c > '9'; c = nc()) if (c != '.') return x *= sgn, *this;
     for (; c >= '0' && c <= '9'; c = nc()) x += base * (c - '0'), base *= 0.1;
-    return sgn * x;
+    return x *= sgn, *this;
   }
 } in;
 ```
