@@ -241,53 +241,29 @@ vector<int> getf(int x) {
 ### 找质因数
 
 ```cpp
-// O(sqrt(n))，无重复
-vector<int> getf(int x) {
-  vector<int> v;
+// O(sqrt(n))
+vector<pair<int, int>> getf(int x) {
+  vector<pair<int, int>> v;
   for (int i = 2; i * i <= x; i++) {
     if (x % i == 0) {
-      v.push_back(i);
-      while (x % i == 0) x /= i;
+      int cnt = 0;
+      while (x % i == 0) x /= i, cnt++;
+      v.emplace_back(i, cnt);
     }
   }
-  if (x != 1) v.push_back(x);
-  return v;
-}
-
-// O(sqrt(n))，有重复
-vector<int> getf(int x) {
-  vector<int> v;
-  for (int i = 2; i * i <= x; i++) {
-    while (x % i == 0) {
-      v.push_back(i);
-      x /= i;
-    }
-  }
-  if (x != 1) v.push_back(x);
+  if (x != 1) v.emplace_back(x, 1);
   return v;
 }
 
 // 前置：线性筛
-// O(logn)，无重复
-vector<int> getf(int x) {
-  vector<int> v;
+// O(logn)
+vector<pair<int, int>> getf(int x) {
+  vector<pair<int, int>> v;
   while (x > 1) {
     int p = spf[x];
-    v.push_back(p);
-    while (x % p == 0) x /= p;
-  }
-  return v;
-}
-
-// O(logn)，有重复
-vector<int> getf(int x) {
-  vector<int> v;
-  while (x > 1) {
-    int p = spf[x];
-    while (x % p == 0) {
-      v.push_back(p);
-      x /= p;
-    }
+    int cnt = 0;
+    while (x % p == 0) x /= p, cnt++;
+    v.emplace_back(p, cnt);
   }
   return v;
 }
