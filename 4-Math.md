@@ -336,27 +336,11 @@ vector<ll> getf(ll x) {
 ### 欧拉函数
 
 ```cpp
-// 前置：找质因数（无重复）
+// 前置：找质因数
 int phi(int x) {
   int ret = x;
-  vector<int> v = getf(x);
-  for (int f : v) ret = ret / f * (f - 1);
+  for (auto& [f, _] : getf(x)) ret = ret / f * (f - 1);
   return ret;
-}
-
-// O(nloglogn)
-int phi[N];
-
-void get_phi() {
-  phi[1] = 1;
-  for (int i = 2; i < N; i++) {
-    if (!phi[i]) {
-      for (int j = i; j < N; j += i) {
-        if (!phi[j]) phi[j] = j;
-        phi[j] = phi[j] / i * (i - 1);
-      }
-    }
-  }
 }
 ```
 
