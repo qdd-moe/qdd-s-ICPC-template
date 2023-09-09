@@ -318,18 +318,18 @@ ll pollard_rho(ll n, ll c) {
   }
 }
 
-vector<ll> getf(ll x) {
-  vector<ll> v;
-  if (x <= 1) return v;
+vector<pair<ll, int>> getf(ll x) {
+  if (x <= 1) return {};
+  map<ll, int> mp;
   function<void(ll)> f = [&](ll n) {
-    if (n == 4) { v.push_back(2); v.push_back(2); return; }
-    if (isprime(n)) { v.push_back(n); return; }
+    if (n == 4) { mp[2] += 2; return; }
+    if (isprime(n)) { mp[n]++; return; }
     ll p = n, c = 19260817;
     while (p == n) p = pollard_rho(n, --c);
     f(p); f(n / p);
   };
   f(x);
-  return v;
+  return vector<pair<ll, int>>(mp.begin(), mp.end());
 }
 ```
 
@@ -647,12 +647,12 @@ ll excrt(vector<ll>& m, vector<ll>& r) {
 ### 原根
 
 ```cpp
-// 前置：找质因数（无重复）
+// 前置：找质因数
 ll primitive_root(ll p) {
-  vector<ll> facs = getf(p - 1);
+  vector<pair<ll, int>> facs = getf(p - 1);
   for (ll i = 2; i < p; i++) {
     bool flag = true;
-    for (ll x : facs) {
+    for (auto& [x, _] : facs) {
       if (qk(i, (p - 1) / x, p) == 1) {
         flag = false;
         break;
