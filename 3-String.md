@@ -200,32 +200,41 @@ struct Manacher {
 
 ```cpp
 // 前缀函数（每一个前缀的最长公共前后缀）
-void get_pi(const string& s, vector<int>& a) {
-  int n = s.size(), j = 0;
-  a.resize(n);
-  for (int i = 1; i < n; i++) {
+vector<int> get_pi(const string& s) {
+  int n = s.size();
+  vector<int> a(n);
+  for (int i = 1, j = 0; i < n; i++) {
     while (j && s[j] != s[i]) j = a[j - 1];
     if (s[j] == s[i]) j++;
     a[i] = j;
   }
+  return a;
 }
 
-void kmp(const string& s, vector<int>& a, const string& t) {
-  int j = 0;
-  for (int i = 0; i < t.size(); i++) {
-    while (j && s[j] != t[i]) j = a[j - 1];
-    if (s[j] == t[i]) j++;
-    if (j == s.size()) {
-      // ...
-      j = a[j - 1]; // 允许重叠匹配 j = 0 不允许
+struct KMP {
+  string s;
+  vector<int> a;
+
+  KMP(const string& s) : s(s), a(get_pi(s)) {}
+
+  vector<int> find_in(const string& t) {
+    vector<int> res;
+    for (int i = 0, j = 0; i < t.size(); i++) {
+      while (j && s[j] != t[i]) j = a[j - 1];
+      if (s[j] == t[i]) j++;
+      if (j == s.size()) {
+        res.push_back(i - j + 1);
+        j = a[j - 1]; // 允许重叠匹配 j = 0 不允许
+      }
     }
+    return res;
   }
-}
+};
 
 // Z函数（每一个后缀和该字符串的最长公共前缀）
-void get_z(const string& s, vector<int>& z) {
+vector<int> get_z(const string& s) {
   int n = s.size(), l = 0, r = 0;
-  z.resize(n);
+  vector<int> z(n);
   for (int i = 1; i < n; i++) {
     if (i <= r) z[i] = min(r - i + 1, z[i - l]);
     while (i + z[i] < n && s[z[i]] == s[i + z[i]]) z[i]++;
@@ -234,6 +243,7 @@ void get_z(const string& s, vector<int>& z) {
       r = i + z[i] - 1;
     }
   }
+  return z;
 }
 ```
 
