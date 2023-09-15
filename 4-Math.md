@@ -55,11 +55,19 @@ ll qk(ll a, const string& b, ll p) {
 const int M_SZ = 3;
 
 using Mat = array<array<ll, M_SZ>, M_SZ>;
+using Vec = array<ll, M_SZ>;
 
 #define rep2 for (int i = 0; i < M_SZ; i++) for (int j = 0; j < M_SZ; j++)
 
 void zero(Mat& a) { rep2 a[i][j] = 0; }
 void one(Mat& a) { rep2 a[i][j] = (i == j); }
+
+Vec mul(const Mat& a, const Vec& b, ll p) {
+  Vec ans;
+  fill(ans.begin(), ans.end(), 0);
+  rep2 { (ans[i] += a[i][j] * b[j]) %= p; }
+  return ans;
+}
 
 Mat mul(const Mat& a, const Mat& b, ll p) {
   Mat ans; zero(ans);
