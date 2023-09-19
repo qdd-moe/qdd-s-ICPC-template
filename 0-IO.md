@@ -43,21 +43,23 @@ while (~scanf) {}
 
 ```cpp
 // 需测试是否可用
-inline __int128 get128() {
-  __int128 x = 0, sgn = 1;
-  char c = getchar();
-  for (; c < '0' || c > '9'; c = getchar()) if (c == '-') sgn = -1;
-  for (; c >= '0' && c <= '9'; c = getchar()) x = x * 10 + c - '0';
-  return sgn * x;
+istream& operator>>(istream& is, __int128& x) {
+  string s;
+  is >> s;
+  x = 0;
+  for (char c : s) {
+    if (c == '-') continue;
+    x = x * 10 + c - '0';
+  }
+  if (s[0] == '-') x = -x;
+  return is;
 }
 
-inline void print128(__int128 x) {
-  if (x < 0) {
-    putchar('-');
-    x = -x;
-  }
-  if (x >= 10) print128(x / 10);
-  putchar(x % 10 + '0');
+ostream& operator<<(ostream& os, __int128 x) {
+  if (x < 0) os << '-', x = -x;
+  if (x > 9) os << x / 10;
+  os << char(x % 10 + '0');
+  return os;
 }
 ```
 
