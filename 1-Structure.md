@@ -34,6 +34,31 @@ void merge(int x, int y) {
 }
 ```
 
++ 可回滚并查集
+
+```cpp
+struct dsu {
+  vector<int> p, sz, undo;
+  dsu(int n) : p(n, -1), sz(n, 1) {}
+  int find(int x) { return (p[x] < 0) ? x : find(p[x]); }
+  bool merge(int x, int y) {
+    x = find(x), y = find(y);
+    if (x == y) return 0;
+    if (sz[x] > sz[y]) swap(x, y);
+    undo.push_back(x);
+    p[x] = y;
+    sz[y] += sz[x];
+    return 1;
+  }
+  void rollback() {
+    int x = undo.back();
+    undo.pop_back();
+    sz[p[x]] -= sz[x];
+    p[x] = -1;
+  }
+};
+```
+
 ### RMQ
 
 + 一维
