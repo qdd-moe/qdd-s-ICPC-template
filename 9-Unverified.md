@@ -927,33 +927,10 @@ vector<V> convexcut(vector<V> A, V k1, V k2) { // 保留 k1,k2,p 逆时针的所
 }
 ```
 
-### 本模板未涉及的专题
+### 找不到想要的？
 
-+ ECNU
-
-**数据结构**
-
-均摊复杂度线段树 K-DTree 树状数组套主席树 左偏树 Treap-序列 可回滚并查集 舞蹈链 笛卡尔树 莫队
-
-**数学**
-
-min_25 杜教筛 伯努利数和等幂求和 单纯形 数论分块
-
-**图论**
-
-zkw费用流 树上点分治 二分图匹配 虚树 欧拉路径 一般图匹配 点双连通分量/广义圆方树
-圆方树 最小树形图 三元环、四元环
-
-**计算几何**
-
-圆与多边形交 圆的离散化、面积并 圆的反演 三维计算几何 旋转 线、面 凸包
-
-+ kuangbin
-
-**数学**
-
-整数拆分 求A^B的约数之和对MOD取模 斐波那契数列取模循环节
-
-**图论**
-
-次小生成树 生成树计数 曼哈顿最小生成树
+[Nyaan's Library](https://nyaannyaan.github.io/library/)
+[F0RE1GNERS](https://github.com/F0RE1GNERS/template)
+[YouKn0wWho](https://github.com/ShahjalalShohag/code-library)
+[OI Wiki](https://oi-wiki.org/)
+[cp-algorithms](https://cp-algorithms.com/)
