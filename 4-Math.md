@@ -878,6 +878,7 @@ double asr(double l, double r) { return asr(l, r, EPS, simpson(l, r)); }
 ### BM 线性递推
 
 ```cpp
+// finding the k-th term is O(n^2 log k)
 namespace BerlekampMassey {
   using V = vector<ll>;
 
