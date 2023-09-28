@@ -100,6 +100,9 @@ void subset(int k, int n) {
     t = ((t & ~y) / x >> 1) | y;
   }
 }
+
+// 枚举超集
+for (int t = (x + 1) | x; t < (1 << n); t = (t + 1) | x)
 ```
 
 ### 高维前缀和
