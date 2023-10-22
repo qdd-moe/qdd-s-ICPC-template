@@ -114,93 +114,40 @@ bool isprime(int x) {
 ### 线性筛
 
 ```cpp
-// 注意 0 和 1 不是素数
-bool vis[N];
-int prime[N];
+struct sieve {
+  vector<bool> vis;
+  vector<int> prime, spf, phi, mu;
 
-void get_prime() {
-  int tot = 0;
-  for (int i = 2; i < N; i++) {
-    if (!vis[i]) prime[tot++] = i;
-    for (int j = 0; j < tot; j++) {
-      int d = i * prime[j];
-      if (d >= N) break;
-      vis[d] = true;
-      if (i % prime[j] == 0) break;
-    }
-  }
-}
-
-// 最小素因子
-bool vis[N];
-int spf[N], prime[N];
-
-void get_spf() {
-  int tot = 0;
-  for (int i = 2; i < N; i++) {
-    if (!vis[i]) {
-      prime[tot++] = i;
-      spf[i] = i;
-    }
-    for (int j = 0; j < tot; j++) {
-      int d = i * prime[j];
-      if (d >= N) break;
-      vis[d] = true;
-      spf[d] = prime[j];
-      if (i % prime[j] == 0) break;
-    }
-  }
-}
-
-// 欧拉函数
-bool vis[N];
-int phi[N], prime[N];
-
-void get_phi() {
-  int tot = 0;
-  phi[1] = 1;
-  for (int i = 2; i < N; i++) {
-    if (!vis[i]) {
-      prime[tot++] = i;
-      phi[i] = i - 1;
-    }
-    for (int j = 0; j < tot; j++) {
-      int d = i * prime[j];
-      if (d >= N) break;
-      vis[d] = true;
-      if (i % prime[j] == 0) {
-        phi[d] = phi[i] * prime[j];
-        break;
+  void init(int n) {
+    vis.assign(n + 1, false);
+    spf.resize(n + 1);
+    phi.resize(n + 1);
+    mu.resize(n + 1);
+    spf[1] = phi[1] = mu[1] = 1;
+    for (int i = 2; i <= n; i++) {
+      if (!vis[i]) {
+        prime.push_back(i);
+        spf[i] = i;
+        phi[i] = i - 1;
+        mu[i] = -1;
       }
-      else phi[d] = phi[i] * (prime[j] - 1);
-    }
-  }
-}
-
-// 莫比乌斯函数
-bool vis[N];
-int mu[N], prime[N];
-
-void get_mu() {
-  int tot = 0;
-  mu[1] = 1;
-  for (int i = 2; i < N; i++) {
-    if (!vis[i]) {
-      prime[tot++] = i;
-      mu[i] = -1;
-    }
-    for (int j = 0; j < tot; j++) {
-      int d = i * prime[j];
-      if (d >= N) break;
-      vis[d] = true;
-      if (i % prime[j] == 0) {
-        mu[d] = 0;
-        break;
+      for (int p : prime) {
+        int d = i * p;
+        if (d > n) break;
+        vis[d] = true;
+        spf[d] = p;
+        if (i % p == 0) {
+          phi[d] = phi[i] * p;
+          mu[d] = 0;
+          break;
+        } else {
+          phi[d] = phi[i] * (p - 1);
+          mu[d] = -mu[i];
+        }
       }
-      else mu[d] = -mu[i];
     }
   }
-}
+};
 ```
 
 ### 区间筛
