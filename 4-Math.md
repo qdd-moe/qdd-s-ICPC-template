@@ -728,6 +728,23 @@ ll SGSB(ll x, ll b, ll p) {
 }
 ```
 
+### 数论分块
+
+```cpp
+// floor(n/i)=v 时 i 的取值范围是 [l,r]
+vector<array<ll, 3>> quotients(ll n) {
+  vector<array<ll, 3>> res;
+  ll h = sqrt(n);
+  res.reserve(2 * h - (h == n / h));
+  for (ll l = 1, v, r; l <= n; l = r + 1) {
+    v = n / l;
+    r = n / v;
+    res.push_back({l, r, v});
+  }
+  return res;
+}
+```
+
 ### 二次剩余
 
 ```cpp
