@@ -551,6 +551,56 @@ void two_sat() {
 }
 ```
 
+### 欧拉路径
+
++ 无向图
+
+```cpp
+vector<int> euler_path(int s) {
+  vector<int> path;
+  stack<pair<int, int>> st;
+  st.emplace(s, -1);
+  while (!st.empty()) {
+    auto [u, i] = st.top();
+    if (g[u].empty()) {
+      if (i != -1) path.push_back(i);
+      st.pop();
+    } else {
+      i = *g[u].begin();
+      int v = es[i].first ^ es[i].second ^ u;
+      g[u].erase(i);
+      g[v].erase(i);
+      st.emplace(v, i);
+    }
+  }
+  return path;
+}
+```
+
++ 有向图
+
+```cpp
+vector<int> euler_path(int s) {
+  vector<int> path;
+  stack<pair<int, int>> st;
+  st.emplace(s, -1);
+  while (!st.empty()) {
+    auto [u, i] = st.top();
+    if (g[u].empty()) {
+      if (i != -1) path.push_back(i);
+      st.pop();
+    } else {
+      i = *g[u].begin();
+      int v = es[i].second;
+      g[u].erase(i);
+      st.emplace(v, i);
+    }
+  }
+  reverse(path.begin(), path.end());
+  return path;
+}
+```
+
 ### 支配树
 
 + 有向无环图
