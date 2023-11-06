@@ -34,10 +34,10 @@ struct Edge {
 };
 
 vector<Edge> g[N];
-ll dis[N];
+i64 dis[N];
 
 void dijkstra(int s) {
-  using pii = pair<ll, int>;
+  using pii = pair<i64, int>;
   memset(dis, 0x3f, sizeof(dis));
   priority_queue<pii, vector<pii>, greater<pii> > q;
   dis[s] = 0;
@@ -140,10 +140,10 @@ struct Edge {
   Edge(int u = 0, int v = 0, int w = 0) : u(u), v(v), w(w) {}
 };
 
-ll kruskal(vector<Edge>& es, int n) {
+i64 kruskal(vector<Edge>& es, int n) {
   sort(es.begin(), es.end(), [](Edge& x, Edge& y) { return x.w < y.w; });
   dsu d(n + 1);
-  ll ans = 0;
+  i64 ans = 0;
   for (Edge& e : es) {
     if (d.merge(e.u, e.v)) {
       ans += e.w;
@@ -250,8 +250,8 @@ struct Dinic {
     return tmp - cap;
   }
 
-  ll solve() {
-    ll flow = 0;
+  i64 solve() {
+    i64 flow = 0;
     while (bfs()) {
       cur.assign(n + 1, 0);
       flow += dfs(s, INF);
@@ -264,25 +264,25 @@ struct Dinic {
 + 最小费用流
 
 ```cpp
-const ll INF = 1e15;
+const i64 INF = 1e15;
 
 struct MCMF {
   struct Edge {
     int from, to;
-    ll cap, cost;
-    Edge(int from, int to, ll cap, ll cost) : from(from), to(to), cap(cap), cost(cost) {}
+    i64 cap, cost;
+    Edge(int from, int to, i64 cap, i64 cost) : from(from), to(to), cap(cap), cost(cost) {}
   };
 
   int n, s, t;
-  ll flow, cost;
+  i64 flow, cost;
   vector<Edge> es;
   vector<vector<int>> g;
-  vector<ll> d, a;  // dis, add, prev
+  vector<i64> d, a;  // dis, add, prev
   vector<int> p, in;
 
   MCMF(int n, int s, int t) : n(n), s(s), t(t), flow(0), cost(0), g(n + 1), p(n + 1), a(n + 1) {}
 
-  void add_edge(int u, int v, ll cap, ll cost) {
+  void add_edge(int u, int v, i64 cap, i64 cost) {
     g[u].push_back(es.size());
     es.emplace_back(u, v, cap, cost);
     g[v].push_back(es.size());
@@ -432,9 +432,9 @@ void init() {
   dfs2(1, 1);
 }
 
-ll go(int u, int v) {
+i64 go(int u, int v) {
   int uu = top[u], vv = top[v];
-  ll res = 0;
+  i64 res = 0;
   while (uu != vv) {
     if (dep[uu] < dep[vv]) {
       swap(u, v);

@@ -6,16 +6,16 @@
 // open hack
 mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-ll random_prime(ll l, ll r) {
+i64 random_prime(i64 l, i64 r) {
   for (;;) {
-    ll x = rng() % (r - l + 1) + l;
+    i64 x = rng() % (r - l + 1) + l;
     if (isprime(x)) return x;
   }
 }
 
 const int x = 135, p = 1e9 + 9;
 
-ll xp[N];
+i64 xp[N];
 
 void init_xp() {
   xp[0] = 1;
@@ -25,12 +25,12 @@ void init_xp() {
 }
 
 struct Hash {
-  vector<ll> h;
+  vector<i64> h;
 
   Hash() : h(1) {}
 
   void add(const string &s) {
-    ll res = h.back();
+    i64 res = h.back();
     for (char c : s) {
       res = (res * x + c) % p;
       h.push_back(res);
@@ -38,7 +38,7 @@ struct Hash {
   }
 
   // 0-indexed, [l, r]
-  ll get(int l, int r) {
+  i64 get(int l, int r) {
     r++;
     return (h[r] - h[l] * xp[r - l] % p + p) % p;
   }
@@ -92,9 +92,9 @@ struct Hash {
 + 二维哈希
 
 ```cpp
-const ll basex = 239, basey = 241, p = 998244353;
+const i64 basex = 239, basey = 241, p = 998244353;
 
-ll pwx[N], pwy[N];
+i64 pwx[N], pwy[N];
 
 void init_xp() {
   pwx[0] = pwy[0] = 1;
@@ -105,11 +105,11 @@ void init_xp() {
 }
 
 struct Hash2D {
-  vector<vector<ll> > h;
+  vector<vector<i64> > h;
 
-  Hash2D(const vector<vector<int> >& a, int n, int m) : h(n + 1, vector<ll>(m + 1)) {
+  Hash2D(const vector<vector<int> >& a, int n, int m) : h(n + 1, vector<i64>(m + 1)) {
     for (int i = 0; i < n; i++) {
-      ll s = 0;
+      i64 s = 0;
       for (int j = 0; j < m; j++) {
         s = (s * basey + a[i][j] + 1) % p;
         h[i + 1][j + 1] = (h[i][j + 1] * basex + s) % p;
@@ -117,10 +117,10 @@ struct Hash2D {
     }
   }
 
-  ll get(int x, int y, int xx, int yy) {
+  i64 get(int x, int y, int xx, int yy) {
     ++xx; ++yy;
     int dx = xx - x, dy = yy - y;
-    ll res = h[xx][yy]
+    i64 res = h[xx][yy]
       - h[x][yy] * pwx[dx]
       - h[xx][y] * pwy[dy]
       + h[x][y] * pwx[dx] % p * pwy[dy];
@@ -132,12 +132,12 @@ struct Hash2D {
 + 动态哈希
 
 ```cpp
-const ll MAGIC = 479;
-const ll IMAGIC = 628392490;
-const ll P = 1e9 + 9;
+const i64 MAGIC = 479;
+const i64 IMAGIC = 628392490;
+const i64 P = 1e9 + 9;
 const int N = 1e5 + 5;
 
-ll pw[N], inv[N];
+i64 pw[N], inv[N];
 
 void init() {
   pw[0] = inv[0] = 1;
@@ -150,18 +150,18 @@ void init() {
 // 1-indexed, [l, r]
 struct fenwick {
   int n;
-  vector<ll> t;
+  vector<i64> t;
   fenwick(int n) : n(n), t(n + 1) {}
-  void add(int p, ll x) {
+  void add(int p, i64 x) {
     for (; p <= n; p += p & -p) (t[p] += x) %= P;
   }
-  ll get(int p) {
-    ll a = 0;
+  i64 get(int p) {
+    i64 a = 0;
     for (; p > 0; p -= p & -p) (a += t[p]) %= P;
     return a;
   }
-  void set(int p, ll x) { add(p, (x - query(p, p) + P) * pw[p] % P); }
-  ll query(int l, int r) { return (get(r) - get(l - 1) + P) * inv[l] % P; }
+  void set(int p, i64 x) { add(p, (x - query(p, p) + P) * pw[p] % P); }
+  i64 query(int l, int r) { return (get(r) - get(l - 1) + P) * inv[l] % P; }
 };
 ```
 

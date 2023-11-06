@@ -7,7 +7,6 @@
 ```cpp
 // Nyaan
 struct AngelBeats {
-  using i64 = long long;
   static constexpr i64 INF = numeric_limits<i64>::max() / 2.1;
 
   struct alignas(32) Node {
@@ -206,8 +205,8 @@ struct AngelBeats {
 // n个人，1至m报数，问最后留下来的人的编号
 // 公式：f(n,m)=(f(n−1,m)+m)%n，f(0,m)=0;
 // O(n)
-ll calc(int n, ll m) {
-    ll p = 0;
+i64 calc(int n, i64 m) {
+    i64 p = 0;
     for (int i = 2; i <= n; i++) {
         p = (p + m) % i;
     }
@@ -219,10 +218,10 @@ ll calc(int n, ll m) {
 // f(n−k+1,1)=m%(n−k+1)
 // if (f==0) f=n−k+1
 // O(k)
-ll cal1(ll n, ll m, ll k) {  // (k == n) equal(calc)
-    ll p = m % (n - k + 1);
+i64 cal1(i64 n, i64 m, i64 k) {  // (k == n) equal(calc)
+    i64 p = m % (n - k + 1);
     if (p == 0) p = n - k + 1;
-    for (ll i = 2; i <= k; i++) {
+    for (i64 i = 2; i <= k; i++) {
         p = (p + m - 1) % (n - k + i) + 1;
     }
     return p;
@@ -230,12 +229,12 @@ ll cal1(ll n, ll m, ll k) {  // (k == n) equal(calc)
 
 // n个人，1至m报数，问第k个出局的人的编号
 // O(m*log(m))
-ll cal2(ll n, ll m, ll k) {
+i64 cal2(i64 n, i64 m, i64 k) {
     if (m == 1)
         return k;
     else {
-        ll a = n - k + 1, b = 1;
-        ll c = m % a, x = 0;
+        i64 a = n - k + 1, b = 1;
+        i64 c = m % a, x = 0;
         if (c == 0) c = a;
         while (b + x <= k) {
             a += x, b += x, c += m * x;
@@ -252,9 +251,9 @@ ll cal2(ll n, ll m, ll k) {
 
 // n个人，1至m报数，问编号为k的人是第几个出局的
 // O(n)
-ll n, k;  //可做n<=4e7,询问个数<=100,下标范围[0,n-1]
-ll dieInXturn(int n, int k, int x) {  // n个人，报数k，下标为X的人第几个死亡
-    ll tmp = 0;
+i64 n, k;  //可做n<=4e7,询问个数<=100,下标范围[0,n-1]
+i64 dieInXturn(int n, int k, int x) {  // n个人，报数k，下标为X的人第几个死亡
+    i64 tmp = 0;
     while (n) {
         x = (x + n) % n;
         if (k > n) x += (k - x - 1 + n - 1) / n * n;
@@ -264,7 +263,7 @@ ll dieInXturn(int n, int k, int x) {  // n个人，报数k，下标为X的人第
         } else {
             if (k > n) {
                 tmp += x / k;
-                ll ttmp = x;
+                i64 ttmp = x;
                 x = x - (x / n + 1) * (x / k) + (x + n) / n * n - k;
                 n -= ttmp / k;
             } else {
@@ -344,7 +343,7 @@ namespace R {
     int n;
     int w[N][N], kx[N], ky[N], py[N], vy[N], slk[N], pre[N];
 
-    ll go() {
+    i64 go() {
         for (int i = 1; i <= n; i++)
             for (int j = 1; j <= n; j++)
                 kx[i] = max(kx[i], w[i][j]);
@@ -371,7 +370,7 @@ namespace R {
             }
             for (; k; k = pre[k]) py[k] = py[pre[k]];
         }
-        ll ans = 0;
+        i64 ans = 0;
         for (int i = 1; i <= n; i++) ans += kx[i] + ky[i];
         return ans;
     }
@@ -384,17 +383,17 @@ namespace R {
 struct HLPP {
     struct Edge {
         int v, rev;
-        ll cap;
+        i64 cap;
     };
     int n, sp, tp, lim, ht, lcnt;
-    ll exf[N];
+    i64 exf[N];
     vector<Edge> G[N];
     vector<int> hq[N], gap[N], h, sum;
     void init(int nn, int s, int t) {
         sp = s, tp = t, n = nn, lim = n + 1, ht = lcnt = 0;
         for (int i = 1; i <= n; ++i) G[i].clear(), exf[i] = 0;
     }
-    void add_edge(int u, int v, ll cap) {
+    void add_edge(int u, int v, i64 cap) {
         G[u].push_back({v, int(G[v].size()), cap});
         G[v].push_back({u, int(G[u].size()) - 1, 0});
     }
@@ -422,7 +421,7 @@ struct HLPP {
     }
     void push(int u, Edge& e) {
         if (!exf[e.v]) hq[h[e.v]].push_back(e.v);
-        ll df = min(exf[u], e.cap);
+        i64 df = min(exf[u], e.cap);
         e.cap -= df, G[e.v][e.rev].cap += df;
         exf[u] -= df, exf[e.v] += df;
     }
@@ -444,7 +443,7 @@ struct HLPP {
                 for (int& i : gap[ht]) update(i, lim);
         }
     }
-    ll hlpp() {
+    i64 hlpp() {
         exf[sp] = INF, exf[tp] = -INF, relabel();
         for (Edge& e : G[sp]) push(sp, e);
         for (; ~ht; --ht) {
@@ -545,13 +544,13 @@ struct graph {
         return 0;
     }
 
-    ll dinic(int s, int t) {
-        ll ans = 0;
+    i64 dinic(int s, int t) {
+        i64 ans = 0;
         this->t = t;
         while (bfs(s)) {
             int flow;
             for (int i = 1; i <= n; i++) cur[i] = first[i];
-            while (flow = dfs(s, INF)) ans += (ll)flow;
+            while (flow = dfs(s, INF)) ans += (i64)flow;
         }
         return ans;
     }
@@ -859,8 +858,8 @@ void ntt(int *a, int g, int p) {
         int wn = qk(g, (p - 1) / (len << 1), p);
         for (int i = 0; i < n; i += (len << 1)) {
             int w = 1;
-            for (int j = 0; j < len; j++, w = (ll)w * wn % p) {
-                int x = a[i + j], y = (ll)w * a[i + j + len] % p;
+            for (int j = 0; j < len; j++, w = (i64)w * wn % p) {
+                int x = a[i + j], y = (i64)w * a[i + j + len] % p;
                 a[i + j] = (x + y) % p, a[i + j + len] = (x - y + p) % p;
             }
         }
@@ -868,9 +867,9 @@ void ntt(int *a, int g, int p) {
 }
 
 int merge(int a1, int a2, int A2) {
-    ll M1 = (ll)p1 * p2;
-    ll A1 = ((ll)inv(p2, p1) * a1 % p1 * p2 + (ll)inv(p1, p2) * a2 % p2 * p1) % M1;
-    ll K = ((A2 - A1) % M2 + M2) % M2 * inv(M1 % M2, M2) % M2;
+    i64 M1 = (i64)p1 * p2;
+    i64 A1 = ((i64)inv(p2, p1) * a1 % p1 * p2 + (i64)inv(p1, p2) * a2 % p2 * p1) % M1;
+    i64 K = ((A2 - A1) % M2 + M2) % M2 * inv(M1 % M2, M2) % M2;
     int ans = (A1 + M1 % p * K) % p;
     return ans;
 }
@@ -888,9 +887,9 @@ void go() {
         for (int i = 0; i < n; i++) f[k][i] = a[i] % P[k];
         for (int i = 0; i < n; i++) g[i] = b[i] % P[k];
         ntt(f[k], G, P[k]), ntt(g, G, P[k]);
-        for (int i = 0; i < n; i++) f[k][i] = (ll)f[k][i] * g[i] % P[k];
+        for (int i = 0; i < n; i++) f[k][i] = (i64)f[k][i] * g[i] % P[k];
         ntt(f[k], inv(G, P[k]), P[k]);
-        for (int i = 0; i < n; i++) f[k][i] = (ll)f[k][i] * inv(n, P[k]) % P[k];
+        for (int i = 0; i < n; i++) f[k][i] = (i64)f[k][i] * inv(n, P[k]) % P[k];
     }
     for (int i = 0; i <= n1 + n2; i++) ans[i] = merge(f[0][i], f[1][i], f[2][i]);
 }

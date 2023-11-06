@@ -156,13 +156,13 @@ vector<int> lis(const vector<T>& S) {
 ### 分治 dp
 
 ```cpp
-vector<ll> dp(n), new_dp(n);
+vector<i64> dp(n), new_dp(n);
 
 // compute new_dp[l], ... new_dp[r] (inclusive)
 function<void(int, int, int, int)> compute = [&](int l, int r, int optl, int optr) {
   if (l > r) return;
   int mid = (l + r) >> 1;
-  pair<ll, int> best = {LLONG_MAX, -1};
+  pair<i64, int> best = {LLONG_MAX, -1};
   for (int j = optl; j <= min(mid, optr); j++) {
     best = min(best, {(j ? dp[j - 1] : 0) + C(j, mid), j});
   }
@@ -199,14 +199,14 @@ int rev_g(int g) {
 ```cpp
 // Kick Start 2022 数位和整除数位积的数的个数
 const int N = 110;
-ll dp[15][N][N], a[15];
+i64 dp[15][N][N], a[15];
 int mod;
 
-ll dfs(int pos, int sum, int tot, bool limit) {
+i64 dfs(int pos, int sum, int tot, bool limit) {
   if (sum > mod) return 0;
   if (pos == -1) return (sum == mod) && (tot == 0);
   if (!limit && dp[pos][sum][tot] != -1) return dp[pos][sum][tot];
-  ll ret = 0;
+  i64 ret = 0;
   int ed = limit ? a[pos] : 9;
   for (int i = 0; i <= ed; i++) {
     ret += dfs(pos - 1, sum + i, (sum == 0 && i == 0) ? 1 : (tot * i) % mod, limit && i == a[pos]);
@@ -215,13 +215,13 @@ ll dfs(int pos, int sum, int tot, bool limit) {
   return ret;
 }
 
-ll cal(ll x) {
-  ll sz = 0;
+i64 cal(i64 x) {
+  i64 sz = 0;
   while (x) {
     a[sz++] = x % 10;
     x /= 10;
   }
-  ll ans = 0;
+  i64 ans = 0;
   for (mod = 1; mod < N; mod++) {
     memset(dp, -1, sizeof(dp));
     ans += dfs(sz - 1, 0, 1, true);
@@ -230,13 +230,13 @@ ll cal(ll x) {
 }
 
 // 小于等于 x 的 base 进制下回文数个数
-ll dp[20][20][20][2], tmp[20], a[20];
+i64 dp[20][20][20][2], tmp[20], a[20];
 
-ll dfs(ll base, ll pos, ll len, ll s, bool limit) {
+i64 dfs(i64 base, i64 pos, i64 len, i64 s, bool limit) {
   if (pos == -1) return s;
   if (!limit && dp[base][pos][len][s] != -1) return dp[base][pos][len][s];
-  ll ret = 0;
-  ll ed = limit ? a[pos] : base - 1;
+  i64 ret = 0;
+  i64 ed = limit ? a[pos] : base - 1;
   for (int i = 0; i <= ed; i++) {
     tmp[pos] = i;
     if (len == pos)
@@ -250,9 +250,9 @@ ll dfs(ll base, ll pos, ll len, ll s, bool limit) {
   return ret;
 }
 
-ll solve(ll x, ll base) {
+i64 solve(i64 x, i64 base) {
   memset(dp, -1, sizeof(dp));
-  ll sz = 0;
+  i64 sz = 0;
   while (x) {
     a[sz++] = x % base;
     x /= base;
@@ -391,7 +391,7 @@ struct custom_hash {
   }
 };
 
-unordered_map<ll, int, custom_hash> safe_map;
+unordered_map<i64, int, custom_hash> safe_map;
 ```
 
 ### updmax/min
@@ -734,7 +734,7 @@ class BigInt {
   static constexpr int base_digits = 9;
 
   using vi = vector<int>;
-  using vll = vector<ll>;
+  using vll = vector<long long>;
 
   vi z;
   int f;
@@ -775,7 +775,7 @@ class BigInt {
       p[i] = p[i - 1] * 10;
     }
     vi res;
-    ll cur = 0;
+    long long cur = 0;
     int cur_digits = 0;
     for (int i = 0; i < (int)a.w; i++) {
       cur += a[i] * p[cur_digits];
@@ -838,7 +838,7 @@ class BigInt {
 
 public:
   BigInt() : f(1) {}
-  BigInt(ll v) { *this = v; }
+  BigInt(long long v) { *this = v; }
   BigInt(const string& s) { read(s); }
 
   void operator=(const BigInt& v) {
@@ -846,7 +846,7 @@ public:
     z = v.z;
   }
 
-  void operator=(ll v) {
+  void operator=(long long v) {
     f = 1;
     if (v < 0) {
       f = -1, v = -v;
@@ -905,7 +905,7 @@ public:
       if (i == (int)z.w) {
         z.push_back(0);
       }
-      ll cur = (ll)z[i] * v + carry;
+      long long cur = (long long)z[i] * v + carry;
       carry = cur / base;
       z[i] = cur % base;
       // asm("divl %%ecx" : "=a"(carry), "=d"(a[i]) : "A"(cur), "c"(base));
@@ -930,7 +930,7 @@ public:
       r += a.z[i];
       int s1 = b.z.w < r.z.w ? r.z[b.z.w] : 0;
       int s2 = b.z.w - 1 < r.z.w ? r.z[b.z.w - 1] : 0;
-      int d = ((ll)s1 * base + s2) / b.z.back();
+      int d = ((long long)s1 * base + s2) / b.z.back();
       r -= b * d;
       while (r < 0) {
         r += b, --d;
@@ -950,21 +950,21 @@ public:
       a.z.push_back(0);
     }
     int n = a.z.w;
-    int firstDigit = sqrt((ll)a.z[n - 1] * base + a.z[n - 2]);
+    int firstDigit = sqrt((long long)a.z[n - 1] * base + a.z[n - 2]);
     int norm = base / (firstDigit + 1);
     a *= norm;
     a *= norm;
     while (a.z.empty() || (int)a.z.w % 2 == 1) {
       a.z.push_back(0);
     }
-    BigInt r = (ll)a.z[n - 1] * base + a.z[n - 2];
-    firstDigit = sqrt((ll)a.z[n - 1] * base + a.z[n - 2]);
+    BigInt r = (long long)a.z[n - 1] * base + a.z[n - 2];
+    firstDigit = sqrt((long long)a.z[n - 1] * base + a.z[n - 2]);
     int q = firstDigit;
     BigInt res;
     for (int j = n / 2 - 1; j >= 0; j--) {
       for (;; --q) {
         BigInt r1 = (r - (res * 2 * base + q) * q) * base * base +
-              (j > 0 ? (ll)a.z[2 * j - 1] * base + a.z[2 * j - 2] : 0);
+              (j > 0 ? (long long)a.z[2 * j - 1] * base + a.z[2 * j - 2] : 0);
         if (r1 >= 0) {
           r = r1;
           break;
@@ -976,7 +976,7 @@ public:
         int d1 = res.z.w + 2 < r.z.w ? r.z[res.z.w + 2] : 0;
         int d2 = res.z.w + 1 < r.z.w ? r.z[res.z.w + 1] : 0;
         int d3 = res.z.w < r.z.w ? r.z[res.z.w] : 0;
-        q = ((ll)d1 * base * base + (ll)d2 * base + d3) / (firstDigit * 2);
+        q = ((long long)d1 * base * base + (long long)d2 * base + d3) / (firstDigit * 2);
       }
     }
     res.trim();
@@ -991,7 +991,7 @@ public:
       f = -f, v = -v;
     }
     for (int i = z.w - 1, rem = 0; i >= 0; --i) {
-      ll cur = z[i] + (ll)rem * base;
+      long long cur = z[i] + (long long)rem * base;
       z[i] = cur / v;
       rem = cur % v;
     }
@@ -1010,7 +1010,7 @@ public:
     }
     int m = 0;
     for (int i = z.w - 1; i >= 0; --i) {
-      m = ((ll)m * base + z[i]) % v;
+      m = ((long long)m * base + z[i]) % v;
     }
     return m * f;
   }
@@ -1055,8 +1055,8 @@ public:
     return res;
   }
 
-  ll long_value() const {
-    ll res = 0;
+  long long long_value() const {
+    long long res = 0;
     for (int i = z.w - 1; i >= 0; i--) {
       res = res * base + z[i];
     }
@@ -1103,7 +1103,7 @@ public:
     BigInt res;
     res.f = f * v.f;
     for (int i = 0, carry = 0; i < (int)c.w; i++) {
-      ll cur = c[i] + carry;
+      long long cur = c[i] + carry;
       res.z.push_back(cur % 1000000);
       carry = cur / 1000000;
     }

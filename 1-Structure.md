@@ -152,21 +152,21 @@ for (int i = 0, j = 0; i + k <= n; i++) {
 // 下标从1开始
 struct fenwick {
   int n;
-  vector<ll> t;
+  vector<i64> t;
   fenwick(int n) : n(n), t(n + 1) {}
-  void add(int p, ll x) {
+  void add(int p, i64 x) {
     // assert(p > 0);
     for (; p <= n; p += p & -p) t[p] += x;
   }
-  ll get(int p) {
-    ll a = 0;
+  i64 get(int p) {
+    i64 a = 0;
     for (; p > 0; p -= p & -p) a += t[p];
     return a;
   }
-  void set(int p, ll x) { add(p, x - query(p, p)); }
-  ll query(int l, int r) { return get(r) - get(l - 1); }
+  void set(int p, i64 x) { add(p, x - query(p, p)); }
+  i64 query(int l, int r) { return get(r) - get(l - 1); }
 
-  int kth(ll k) {
+  int kth(i64 k) {
     int p = 0;
     for (int i = __lg(n); i >= 0; i--) {
       int p_ = p + (1 << i);
@@ -185,14 +185,14 @@ struct fenwick {
 ```cpp
 struct fenwick {
   int n;
-  vector<ll> t;
+  vector<i64> t;
   fenwick(int n) : n(n), t(n) {}
-  void add(int p, ll x) {
+  void add(int p, i64 x) {
     // assert(p >= 0);
     for (; p < n; p |= p + 1) t[p] += x;
   }
-  ll get(int p) {
-    ll a = 0;
+  i64 get(int p) {
+    i64 a = 0;
     for (; p >= 0; p = (p & (p + 1)) - 1) a += t[p];
     return a;
   }
@@ -202,7 +202,7 @@ struct fenwick {
 + 区间加，单点查询
 
 ```cpp
-void range_add(int l, int r, ll x) {
+void range_add(int l, int r, i64 x) {
   add(l, x);
   add(r + 1, -x);
 }
@@ -213,14 +213,14 @@ void range_add(int l, int r, ll x) {
 ```cpp
 fenwick t1, t2;
 
-void range_add(int l, int r, ll x) {
+void range_add(int l, int r, i64 x) {
   t1.add(l, x);
   t2.add(l, l * x);
   t1.add(r + 1, -x);
   t2.add(r + 1, (r + 1) * -x);
 }
 
-ll range_sum(int l, int r) {
+i64 range_sum(int l, int r) {
   return (r + 1) * t1.get(r) - t2.get(r) - l * t1.get(l - 1) + t2.get(l - 1);
 }
 ```
@@ -229,7 +229,7 @@ ll range_sum(int l, int r) {
 
 ```cpp
 struct fenwick {
-  ll t[N][N];
+  i64 t[N][N];
 
   int lowbit(int x) { return x & (-x); }
 
@@ -238,14 +238,14 @@ struct fenwick {
       for (int j = y; j <= m; j += lowbit(j)) t[i][j] += d;
   }
 
-  ll get(int x, int y) {
-    ll sum = 0;
+  i64 get(int x, int y) {
+    i64 sum = 0;
     for (int i = x; i > 0; i -= lowbit(i))
       for (int j = y; j > 0; j -= lowbit(j)) sum += t[i][j];
     return sum;
   }
 
-  ll query(int x, int y, int xx, int yy) {
+  i64 query(int x, int y, int xx, int yy) {
     return get(xx, yy) - get(x - 1, yy) - get(xx, y - 1) + get(x - 1, y - 1);
   }
 };
@@ -256,28 +256,28 @@ struct fenwick {
 ```cpp
 fenwick t0, t1, t2, t3;
 
-void add4(int x, int y, ll d) {
+void add4(int x, int y, i64 d) {
   t0.add(x, y, d);
   t1.add(x, y, d * x);
   t2.add(x, y, d * y);
   t3.add(x, y, d * x * y);
 }
 
-void range_add(int x, int y, int xx, int yy, ll d) {
+void range_add(int x, int y, int xx, int yy, i64 d) {
   add4(x, y, d);
   add4(x, yy + 1, -d);
   add4(xx + 1, y, -d);
   add4(xx + 1, yy + 1, d);
 }
 
-ll get4(int x, int y) {
+i64 get4(int x, int y) {
   return (x + 1) * (y + 1) * t0.get(x, y)
   - (y + 1) * t1.get(x, y)
   - (x + 1) * t2.get(x, y)
   + t3.get(x, y);
 }
 
-ll range_sum(int x, int y, int xx, int yy) {
+i64 range_sum(int x, int y, int xx, int yy) {
   return get4(xx, yy) - get4(x - 1, yy) - get4(xx, y - 1) + get4(x - 1, y - 1);
 }
 ```
@@ -525,19 +525,19 @@ struct lazy_segtree {
   }
 };
 
-auto op = [](ll a, ll b) { return a + b; };
+auto op = [](i64 a, i64 b) { return a + b; };
 auto e = []() { return 0LL; };
-auto mapping = [](ll a, ll f, int l, int r) { return a + f * (r - l + 1); };
-auto composition = [](ll f, ll g) { return f + g; };  // f：外层函数 g：内层函数
+auto mapping = [](i64 a, i64 f, int l, int r) { return a + f * (r - l + 1); };
+auto composition = [](i64 f, i64 g) { return f + g; };  // f：外层函数 g：内层函数
 auto id = []() { return 0LL; };  // 如果是区间赋值，选取一个数据范围外的值
 
-lazy_segtree<ll, ll> seg(n, op, e, mapping, composition, id);
+lazy_segtree<i64, i64> seg(n, op, e, mapping, composition, id);
 ```
 
 + 区间乘混加，区间和取模
 
 ```cpp
-// S = ll, F = pair<ll, ll>
+// S = i64, F = pair<i64, i64>
 S op(S a, S b) { return (a + b) % P; }
 S e() { return 0; }
 S mapping(S a, F f, int l, int r) { return (a * f.first % P + (r - l + 1) * f.second % P) % P; }
@@ -627,7 +627,7 @@ struct FST {
 
   int ask(int p1, int p2, int pl, int pr, int k) {
     if (pl == pr) return pl;
-    ll vl = t[t[p2].lc].val - t[t[p1].lc].val;
+    i64 vl = t[t[p2].lc].val - t[t[p1].lc].val;
     if (k <= vl) return ask(t[p1].lc, t[p2].lc, pl, mid, k);
     return ask(t[p1].rc, t[p2].rc, mid + 1, pr, k - vl);
   }

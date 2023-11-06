@@ -3,44 +3,44 @@
 ### GCD & LCM
 
 ```cpp
-ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
-ll lcm(ll a, ll b) { return a / gcd(a, b) * b; }
+i64 gcd(i64 a, i64 b) { return b ? gcd(b, a % b) : a; }
+i64 lcm(i64 a, i64 b) { return a / gcd(a, b) * b; }
 ```
 
 ### 快速乘 & 快速幂
 
 ```cpp
 // 模数爆int时使用
-ll mul(ll a, ll b, ll p) {
-  ll ans = 0;
+i64 mul(i64 a, i64 b, i64 p) {
+  i64 ans = 0;
   for (a %= p; b; b >>= 1, a = (a << 1) % p)
     if (b & 1) ans = (ans + a) % p;
   return ans;
 }
 
 // O(1)
-ll mul(ll a, ll b, ll p) {
-  return (ll)(__int128(a) * b % p);
+i64 mul(i64 a, i64 b, i64 p) {
+  return (i64)(__int128(a) * b % p);
 }
 
-ll qk(ll a, ll b, ll p) {
-  ll ans = 1 % p;
+i64 qk(i64 a, i64 b, i64 p) {
+  i64 ans = 1 % p;
   for (a %= p; b; b >>= 1, a = a * a % p)
     if (b & 1) ans = ans * a % p;
   return ans;
 }
 
 // 爆int
-ll qk(ll a, ll b, ll p) {
-  ll ans = 1 % p;
+i64 qk(i64 a, i64 b, i64 p) {
+  i64 ans = 1 % p;
   for (a %= p; b; b >>= 1, a = mul(a, a, p))
     if (b & 1) ans = mul(ans, a, p);
   return ans;
 }
 
 // 十进制快速幂
-ll qk(ll a, const string& b, ll p) {
-  ll ans = 1;
+i64 qk(i64 a, const string& b, i64 p) {
+  i64 ans = 1;
   for (int i = b.size() - 1; i >= 0; i--) {
     ans = ans * qk(a, b[i] - '0', p) % p;
     a = qk(a, 10, p);
@@ -54,22 +54,22 @@ ll qk(ll a, const string& b, ll p) {
 ```cpp
 const int M_SZ = 3;
 
-using Mat = array<array<ll, M_SZ>, M_SZ>;
-using Vec = array<ll, M_SZ>;
+using Mat = array<array<i64, M_SZ>, M_SZ>;
+using Vec = array<i64, M_SZ>;
 
 #define rep2 for (int i = 0; i < M_SZ; i++) for (int j = 0; j < M_SZ; j++)
 
 void zero(Mat& a) { rep2 a[i][j] = 0; }
 void one(Mat& a) { rep2 a[i][j] = (i == j); }
 
-Vec mul(const Mat& a, const Vec& b, ll p) {
+Vec mul(const Mat& a, const Vec& b, i64 p) {
   Vec ans;
   fill(ans.begin(), ans.end(), 0);
   rep2 { (ans[i] += a[i][j] * b[j]) %= p; }
   return ans;
 }
 
-Mat mul(const Mat& a, const Mat& b, ll p) {
+Mat mul(const Mat& a, const Mat& b, i64 p) {
   Mat ans; zero(ans);
   rep2 if (a[i][j]) for (int k = 0; k < M_SZ; k++) {
     (ans[i][k] += a[i][j] * b[j][k]) %= p;
@@ -77,7 +77,7 @@ Mat mul(const Mat& a, const Mat& b, ll p) {
   return ans;
 }
 
-Mat qk(Mat a, ll b, ll p) {
+Mat qk(Mat a, i64 b, i64 p) {
   Mat ans; one(ans);
   for (; b; b >>= 1) {
     if (b & 1) ans = mul(a, ans, p);
@@ -87,7 +87,7 @@ Mat qk(Mat a, ll b, ll p) {
 }
 
 // 十进制快速幂
-Mat qk(Mat a, const string& b, ll p) {
+Mat qk(Mat a, const string& b, i64 p) {
   Mat ans; one(ans);
   for (int i = b.size() - 1; i >= 0; i--) {
     ans = mul(qk(a, b[i] - '0', p), ans, p);
@@ -155,17 +155,17 @@ struct sieve {
 ```cpp
 // a, b <= 1e13, b - a <= 1e6
 bool vis_small[N], vis_big[N];
-ll prime[N];
+i64 prime[N];
 int tot = 0;
 
-void get_prime(ll a, ll b) {
-  ll c = ceil(sqrt(b));
-  for (ll i = 2; i <= c; i++) {
+void get_prime(i64 a, i64 b) {
+  i64 c = ceil(sqrt(b));
+  for (i64 i = 2; i <= c; i++) {
     if (!vis_small[i]) {
-      for (ll j = i * i; j <= c; j += i) {
+      for (i64 j = i * i; j <= c; j += i) {
         vis_small[j] = 1;
       }
-      for (ll j = max(i, (a + i - 1) / i) * i; j <= b; j += i) {
+      for (i64 j = max(i, (a + i - 1) / i) * i; j <= b; j += i) {
         vis_big[j - a] = 1;
       }
     }
@@ -227,10 +227,10 @@ vector<pair<int, int>> getf(int x) {
 ### Miller & Pollard
 
 ```cpp
-ll mul(ll a, ll b, ll p) { return (ll)(__int128(a) * b % p); }
+i64 mul(i64 a, i64 b, i64 p) { return (i64)(__int128(a) * b % p); }
 
-ll qk(ll a, ll b, ll p) {
-  ll ans = 1 % p;
+i64 qk(i64 a, i64 b, i64 p) {
+  i64 ans = 1 % p;
   for (a %= p; b; b >>= 1, a = mul(a, a, p))
     if (b & 1) ans = mul(ans, a, p);
   return ans;
@@ -238,14 +238,14 @@ ll qk(ll a, ll b, ll p) {
 
 // O(logn)
 // int范围只需检查2, 7, 61
-bool isprime(ll n) {
+bool isprime(i64 n) {
   if (n < 3) return n == 2;
   if (!(n & 1)) return false;
-  ll d = n - 1, r = 0;
+  i64 d = n - 1, r = 0;
   while (!(d & 1)) d >>= 1, r++;
-  static vector<ll> A = {2, 325, 9375, 28178, 450775, 9780504, 1795265022};
-  for (ll a : A) {
-    ll t = qk(a, d, n);
+  static vector<i64> A = {2, 325, 9375, 28178, 450775, 9780504, 1795265022};
+  for (i64 a : A) {
+    i64 t = qk(a, d, n);
     if (t <= 1 || t == n - 1) continue;
     for (int i = 0; i < r; i++) {
       t = mul(t, t, n);
@@ -259,32 +259,32 @@ bool isprime(ll n) {
 
 mt19937_64 rng(42);
 
-ll pollard_rho(ll n, ll c) {
-  ll x = rng() % (n - 1) + 1, y = x;
-  auto f = [&](ll v) {
-    ll t = mul(v, v, n) + c;
+i64 pollard_rho(i64 n, i64 c) {
+  i64 x = rng() % (n - 1) + 1, y = x;
+  auto f = [&](i64 v) {
+    i64 t = mul(v, v, n) + c;
     return t < n ? t : t - n;
   };
   for (;;) {
     x = f(x); y = f(f(y));
     if (x == y) return n;
-    ll d = gcd(abs(x - y), n);
+    i64 d = gcd(abs(x - y), n);
     if (d != 1) return d;
   }
 }
 
-vector<pair<ll, int>> getf(ll x) {
+vector<pair<i64, int>> getf(i64 x) {
   if (x <= 1) return {};
-  map<ll, int> mp;
-  function<void(ll)> f = [&](ll n) {
+  map<i64, int> mp;
+  function<void(i64)> f = [&](i64 n) {
     if (n == 4) { mp[2] += 2; return; }
     if (isprime(n)) { mp[n]++; return; }
-    ll p = n, c = 19260817;
+    i64 p = n, c = 19260817;
     while (p == n) p = pollard_rho(n, --c);
     f(p); f(n / p);
   };
   f(x);
-  return vector<pair<ll, int>>(mp.begin(), mp.end());
+  return vector<pair<i64, int>>(mp.begin(), mp.end());
 }
 ```
 
@@ -304,7 +304,7 @@ int phi(int x) {
 ```cpp
 // ax + by = gcd(a, b)
 // return {gcd, x, y}
-array<ll, 3> exgcd(ll a, ll b) {
+array<i64, 3> exgcd(i64 a, i64 b) {
   if (b == 0) return {a, 1, 0};
   auto [d, x, y] = exgcd(b, a % b);
   return {d, y, x - a / b * y};
@@ -317,13 +317,13 @@ array<ll, 3> exgcd(ll a, ll b) {
 // f(a,b,c,n) = ∑(i=[0,n]) (ai+b)/c
 // g(a,b,c,n) = ∑(i=[0,n]) i*((ai+b)/c)
 // h(a,b,c,n) = ∑(i=[0,n]) ((ai+b)/c)^2
-ll f(ll a, ll b, ll c, ll n);
-ll g(ll a, ll b, ll c, ll n);
-ll h(ll a, ll b, ll c, ll n);
+i64 f(i64 a, i64 b, i64 c, i64 n);
+i64 g(i64 a, i64 b, i64 c, i64 n);
+i64 h(i64 a, i64 b, i64 c, i64 n);
 
-ll f(ll a, ll b, ll c, ll n) {
+i64 f(i64 a, i64 b, i64 c, i64 n) {
   if (n < 0) return 0;
-  ll m = (a * n + b) / c;
+  i64 m = (a * n + b) / c;
   if (a >= c || b >= c) {
     return (a / c) * n * (n + 1) / 2
     + (b / c) * (n + 1)
@@ -333,9 +333,9 @@ ll f(ll a, ll b, ll c, ll n) {
   }
 }
 
-ll g(ll a, ll b, ll c, ll n) {
+i64 g(i64 a, i64 b, i64 c, i64 n) {
   if (n < 0) return 0;
-  ll m = (a * n + b) / c;
+  i64 m = (a * n + b) / c;
   if (a >= c || b >= c) {
     return (a / c) * n * (n + 1) * (2 * n + 1) / 6
     + (b / c) * n * (n + 1) / 2
@@ -347,9 +347,9 @@ ll g(ll a, ll b, ll c, ll n) {
   }
 }
 
-ll h(ll a, ll b, ll c, ll n) {
+i64 h(i64 a, i64 b, i64 c, i64 n) {
   if (n < 0) return 0;
-  ll m = (a * n + b) / c;
+  i64 m = (a * n + b) / c;
   if (a >= c || b >= c) {
     return (a / c) * (a / c) * n * (n + 1) * (2 * n + 1) / 6
     + (b / c) * (b / c) * (n + 1)
@@ -369,18 +369,18 @@ ll h(ll a, ll b, ll c, ll n) {
 ### 逆元
 
 ```cpp
-ll inv(ll x) { return qk(x, P - 2, P); }
+i64 inv(i64 x) { return qk(x, P - 2, P); }
 
 // EXGCD
 // gcd(a, p) = 1时有逆元
-ll inv(ll a, ll p) {
+i64 inv(i64 a, i64 p) {
   auto [d, x, y] = exgcd(a, p);
   if (d == 1) return (x % p + p) % p;
   return -1;
 }
 
 // 逆元打表
-ll inv[N];
+i64 inv[N];
 
 void init_inv() {
   inv[1] = 1;
@@ -394,7 +394,7 @@ void init_inv() {
 
 ```cpp
 // 组合数打表
-ll C[N][N];
+i64 C[N][N];
 
 void initC() {
   C[0][0] = 1;
@@ -408,7 +408,7 @@ void initC() {
 
 // 快速组合数取模
 // MAXN开2倍上限
-ll fac[N], ifac[N];
+i64 fac[N], ifac[N];
 
 void init_inv() {
   fac[0] = 1;
@@ -421,20 +421,20 @@ void init_inv() {
   }
 }
 
-ll C(int n, int m) {
+i64 C(int n, int m) {
   if (n < m || m < 0) return 0;
   return fac[n] * ifac[m] % P * ifac[n - m] % P;
 }
 
 // Lucas
-ll C(ll n, ll m) {
+i64 C(i64 n, i64 m) {
   if (n < m || m < 0) return 0;
   if (n < P && m < P) return fac[n] * ifac[m] % P * ifac[n - m] % P;
   return C(n / P, m / P) * C(n % P, m % P) % P;
 }
 
 // 可重复组合数
-ll H(int n, int m) { return C(n + m - 1, m); }
+i64 H(int n, int m) { return C(n + m - 1, m); }
 ```
 
 ### 康托展开
@@ -551,29 +551,29 @@ int gauss(int n, int m, vector<bitset<N>> a, bitset<N>& ans) {
 
 ```cpp
 struct Basis {
-  vector<ll> a;
-  void insert(ll x) {
+  vector<i64> a;
+  void insert(i64 x) {
     x = minxor(x);
     if (!x) return;
-    for (ll& i : a)
+    for (i64& i : a)
       if ((i ^ x) < i) i ^= x;
     a.push_back(x);
     sort(a.begin(), a.end());
   }
-  bool can(ll x) { return !minxor(x); }
-  ll maxxor(ll x = 0) {
-    for (ll i : a) x = max(x, x ^ i);
+  bool can(i64 x) { return !minxor(x); }
+  i64 maxxor(i64 x = 0) {
+    for (i64 i : a) x = max(x, x ^ i);
     return x;
   }
-  ll minxor(ll x = 0) {
-    for (ll i : a) x = min(x, x ^ i);
+  i64 minxor(i64 x = 0) {
+    for (i64 i : a) x = min(x, x ^ i);
     return x;
   }
-  ll kth(ll k) {  // 1st is 0
+  i64 kth(i64 k) {  // 1st is 0
     int sz = a.size();
     if (k > (1LL << sz)) return -1;
     k--;
-    ll ans = 0;
+    i64 ans = 0;
     for (int i = 0; i < sz; i++)
       if (k >> i & 1) ans ^= a[i];
     return ans;
@@ -585,8 +585,8 @@ struct Basis {
 
 ```cpp
 // 前置：exgcd
-ll excrt(vector<ll>& m, vector<ll>& r) {
-  ll M = m[0], R = r[0];
+i64 excrt(vector<i64>& m, vector<i64>& r) {
+  i64 M = m[0], R = r[0];
   for (int i = 1; i < m.size(); i++) {
     auto [d, x, y] = exgcd(M, m[i]);
     if ((r[i] - R) % d) return -1;
@@ -603,9 +603,9 @@ ll excrt(vector<ll>& m, vector<ll>& r) {
 
 ```cpp
 // 前置：找质因数
-ll primitive_root(ll p) {
-  vector<pair<ll, int>> facs = getf(p - 1);
-  for (ll i = 2; i < p; i++) {
+i64 primitive_root(i64 p) {
+  vector<pair<i64, int>> facs = getf(p - 1);
+  for (i64 i = 2; i < p; i++) {
     bool flag = true;
     for (auto& [x, _] : facs) {
       if (qk(i, (p - 1) / x, p) == 1) {
@@ -623,17 +623,17 @@ ll primitive_root(ll p) {
 
 ```cpp
 // a ^ x = b (mod p)，要求模数为素数
-ll BSGS(ll a, ll b, ll p) {
+i64 BSGS(i64 a, i64 b, i64 p) {
   a %= p;
   if (!a && !b) return 1;
   if (!a) return -1;
-  map<ll, ll> mp;
-  ll m = ceil(sqrt(p)), v = 1;
+  map<i64, i64> mp;
+  i64 m = ceil(sqrt(p)), v = 1;
   for (int i = 1; i <= m; i++) {
     (v *= a) %= p;
     mp[v * b % p] = i;
   }
-  ll vv = v;
+  i64 vv = v;
   for (int i = 1; i <= m; i++) {
     auto it = mp.find(vv);
     if (it != mp.end()) return i * m - it->second;
@@ -643,19 +643,19 @@ ll BSGS(ll a, ll b, ll p) {
 }
 
 // 模数可以非素数
-ll exBSGS(ll a, ll b, ll p) {
+i64 exBSGS(i64 a, i64 b, i64 p) {
   a %= p; b %= p;
   if (a == 0) return b > 1 ? -1 : (b == 0 && p != 1);
-  ll c = 0, q = 1;
+  i64 c = 0, q = 1;
   for (;;) {
-    ll g = gcd(a, p);
+    i64 g = gcd(a, p);
     if (g == 1) break;
     if (b == 1) return c;
     if (b % g) return -1;
     ++c; b /= g; p /= g; q = a / g * q % p;
   }
-  map<ll, ll> mp;
-  ll m = ceil(sqrt(p)), v = 1;
+  map<i64, i64> mp;
+  i64 m = ceil(sqrt(p)), v = 1;
   for (int i = 1; i <= m; i++) {
     (v *= a) %= p;
     mp[v * b % p] = i;
@@ -669,8 +669,8 @@ ll exBSGS(ll a, ll b, ll p) {
 }
 
 // 已知 x, b, p，求 a
-ll SGSB(ll x, ll b, ll p) {
-  ll g = primitive_root(p);
+i64 SGSB(i64 x, i64 b, i64 p) {
+  i64 g = primitive_root(p);
   return qk(g, BSGS(qk(g, x, p), b, p), p);
 }
 ```
@@ -679,11 +679,11 @@ ll SGSB(ll x, ll b, ll p) {
 
 ```cpp
 // floor(n/i)=v 时 i 的取值范围是 [l,r]
-vector<array<ll, 3>> quotients(ll n) {
-  vector<array<ll, 3>> res;
-  ll h = sqrt(n);
+vector<array<i64, 3>> quotients(i64 n) {
+  vector<array<i64, 3>> res;
+  i64 h = sqrt(n);
   res.reserve(2 * h - (h == n / h));
-  for (ll l = 1, v, r; l <= n; l = r + 1) {
+  for (i64 l = 1, v, r; l <= n; l = r + 1) {
     v = n / l;
     r = n / v;
     res.push_back({l, r, v});
@@ -695,15 +695,15 @@ vector<array<ll, 3>> quotients(ll n) {
 ### 二次剩余
 
 ```cpp
-ll Quadratic_residue(ll a) {
+i64 Quadratic_residue(i64 a) {
   if (a == 0) return 0;
-  ll b;
+  i64 b;
   do b = rng() % P;
   while (qk(b, (P - 1) >> 1, P) != P - 1);
-  ll s = P - 1, t = 0, f = 1;
+  i64 s = P - 1, t = 0, f = 1;
   while (!(s & 1)) s >>= 1, t++, f <<= 1;
   t--, f >>= 1;
-  ll x = qk(a, (s + 1) >> 1, P), inv_a = qk(a, P - 2, P);
+  i64 x = qk(a, (s + 1) >> 1, P), inv_a = qk(a, P - 2, P);
   while (t) {
     f >>= 1;
     if (qk(inv_a * x % P * x % P, f, P) != 1) {
@@ -759,25 +759,25 @@ const int P = 998244353, G = 3, IG = 332748118;
 
 int n1, n2, n, k, rev[N];
 
-void ntt(vector<ll>& a, int p) {
+void ntt(vector<i64>& a, int p) {
   for (int i = 0; i < n; i++) if (i < rev[i]) swap(a[i], a[rev[i]]);
   for (int h = 1; h < n; h <<= 1) {
-    ll wn = qk(p == 1 ? G : IG, (P - 1) / (h << 1), P);
+    i64 wn = qk(p == 1 ? G : IG, (P - 1) / (h << 1), P);
     for (int i = 0; i < n; i += (h << 1)) {
-      ll w = 1;
+      i64 w = 1;
       for (int j = 0; j < h; j++, (w *= wn) %= P) {
-        ll x = a[i + j], y = w * a[i + j + h] % P;
+        i64 x = a[i + j], y = w * a[i + j + h] % P;
         a[i + j] = (x + y) % P, a[i + j + h] = (x - y + P) % P;
       }
     }
   }
   if (p == -1) {
-    ll ninv = qk(n, P - 2, P);
+    i64 ninv = qk(n, P - 2, P);
     for (int i = 0; i < n; i++) (a[i] *= ninv) %= P;
   }
 }
 
-void go(vector<ll>& a, vector<ll>& b) {
+void go(vector<i64>& a, vector<i64>& b) {
   n = 1, k = 0;
   while (n <= n1 + n2) n <<= 1, k++;
   a.resize(n); b.resize(n);
@@ -791,26 +791,26 @@ void go(vector<ll>& a, vector<ll>& b) {
 + FWT
 
 ```cpp
-void AND(ll& a, ll& b) { a += b; }
-void rAND(ll& a, ll& b) { a -= b; }
+void AND(i64& a, i64& b) { a += b; }
+void rAND(i64& a, i64& b) { a -= b; }
 
-void OR(ll& a, ll& b) { b += a; }
-void rOR(ll& a, ll& b) { b -= a; }
+void OR(i64& a, i64& b) { b += a; }
+void rOR(i64& a, i64& b) { b -= a; }
 
-void XOR(ll& a, ll& b) {
-  ll x = a, y = b;
+void XOR(i64& a, i64& b) {
+  i64 x = a, y = b;
   a = (x + y) % P;
   b = (x - y + P) % P;
 }
-void rXOR(ll& a, ll& b) {
-  static ll inv2 = (P + 1) / 2;
-  ll x = a, y = b;
+void rXOR(i64& a, i64& b) {
+  static i64 inv2 = (P + 1) / 2;
+  i64 x = a, y = b;
   a = (x + y) * inv2 % P;
   b = (x - y + P) * inv2 % P;
 }
 
 template<class T>
-void fwt(vector<ll>& a, int n, T f) {
+void fwt(vector<i64>& a, int n, T f) {
   for (int d = 1; d < n; d <<= 1) {
     for (int i = 0; i < n; i += (d << 1)) {
       for (int j = 0; j < d; j++) {
@@ -844,9 +844,9 @@ double asr(double l, double r) { return asr(l, r, EPS, simpson(l, r)); }
 ```cpp
 // finding the k-th term is O(n^2 log k)
 namespace BerlekampMassey {
-  using V = vector<ll>;
+  using V = vector<i64>;
 
-  void up(ll & a, ll b) { (a += b) %= P; }
+  void up(i64 & a, i64 b) { (a += b) %= P; }
 
   V mul(const V& a, const V& b, const V& m, int k) {
     V r(2 * k - 1);
@@ -861,7 +861,7 @@ namespace BerlekampMassey {
     return r;
   }
 
-  V pow(ll n, const V& m) {
+  V pow(i64 n, const V& m) {
     int k = (int)m.size() - 1;
     assert(m[k] == -1 || m[k] == P - 1);
     V r(k), x(k);
@@ -871,7 +871,7 @@ namespace BerlekampMassey {
     return r;
   }
 
-  ll go(const V& a, const V& x, ll n) {
+  i64 go(const V& a, const V& x, i64 n) {
     // a: (-1, a1, a2, ..., ak).reverse
     // x: x1, x2, ..., xk
     // x[n] = sum[a[i]*x[n-i],{i,1,k}]
@@ -879,20 +879,20 @@ namespace BerlekampMassey {
     if (n <= k) return x[n - 1];
     if (a.size() == 2) return x[0] * qk(a[0], n - 1, P) % P;
     V r = pow(n - 1, a);
-    ll ans = 0;
+    i64 ans = 0;
     for (int i = 0; i < k; i++) up(ans, r[i] * x[i]);
     return (ans + P) % P;
   }
 
   V BM(const V& x) {
     V C{-1}, B{-1};
-    ll L = 0, m = 1, b = 1;
+    i64 L = 0, m = 1, b = 1;
     for (int n = 0; n < (int)x.size(); n++) {
-      ll d = 0;
+      i64 d = 0;
       for (int i = 0; i <= L; i++) up(d, C[i] * x[n - i]);
       if (d == 0) { ++m; continue; }
       V T = C;
-      ll c = P - d * inv(b, P) % P;
+      i64 c = P - d * inv(b, P) % P;
       C.resize(max(C.size(), size_t(B.size() + m)));
       for (int i = 0; i < (int)B.size(); i++) up(C[i + m], c * B[i]);
       if (2 * L > n) { ++m; continue; }
