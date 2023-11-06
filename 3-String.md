@@ -49,9 +49,9 @@ struct Hash {
 
 ```cpp
 const int x = 135, p1 = 1e9 + 7, p2 = 1e9 + 9;
-const ull mask32 = ~(0u);
+const u64 mask32 = ~(0u);
 
-ull xp1[N], xp2[N];
+u64 xp1[N], xp2[N];
 
 void init_xp() {
   xp1[0] = xp2[0] = 1;
@@ -62,13 +62,13 @@ void init_xp() {
 }
 
 struct Hash {
-  vector<ull> h;
+  vector<u64> h;
 
   Hash() : h(1) {}
 
   void add(const string& s) {
-    ull res1 = h.back() >> 32;
-    ull res2 = h.back() & mask32;
+    u64 res1 = h.back() >> 32;
+    u64 res2 = h.back() & mask32;
     for (char c : s) {
       res1 = (res1 * x + c) % p1;
       res2 = (res2 * x + c) % p2;
@@ -77,13 +77,13 @@ struct Hash {
   }
 
   // 0-indexed, [l, r]
-  ull get(int l, int r) {
+  u64 get(int l, int r) {
     r++;
     int len = r - l;
-    ull l1 = h[l] >> 32, r1 = h[r] >> 32;
-    ull l2 = h[l] & mask32, r2 = h[r] & mask32;
-    ull res1 = (r1 - l1 * xp1[len] % p1 + p1) % p1;
-    ull res2 = (r2 - l2 * xp2[len] % p2 + p2) % p2;
+    u64 l1 = h[l] >> 32, r1 = h[r] >> 32;
+    u64 l2 = h[l] & mask32, r2 = h[r] & mask32;
+    u64 res1 = (r1 - l1 * xp1[len] % p1 + p1) % p1;
+    u64 res2 = (r2 - l2 * xp2[len] % p2 + p2) % p2;
     return (res1 << 32) | res2;
   }
 };
