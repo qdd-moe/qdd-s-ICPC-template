@@ -29,15 +29,12 @@ i64 XP1::mod = 1e9 + 7;
 
 template <class T>
 struct Hash {
-  constexpr static i64 x() { return T::base; }
-  constexpr static i64 p() { return T::mod; }
-
   static vector<i64> xp;
 
   static void gen_xp(int n) {
     if (xp.empty()) xp.push_back(1);
     while ((int)xp.size() < n) {
-      xp.push_back(xp.back() * x() % p());
+      xp.push_back(xp.back() * T::base % T::mod);
     }
   }
 
@@ -48,7 +45,7 @@ struct Hash {
   void add(const string& s) {
     i64 res = h.back();
     for (char c : s) {
-      res = (res * x() + c) % p();
+      res = (res * T::base + c) % T::mod;
       h.push_back(res);
     }
   }
@@ -57,7 +54,7 @@ struct Hash {
   i64 get(int l, int r) {
     r++;
     gen_xp(r - l + 1);
-    return (h[r] - h[l] * xp[r - l] % p() + p()) % p();
+    return (h[r] - h[l] * xp[r - l] % T::mod + T::mod) % T::mod;
   }
 };
 
