@@ -13,26 +13,42 @@ i64 random_prime(i64 l, i64 r) {
   }
 }
 
-const int x = 135, p = 1e9 + 9;
+struct XP1 {
+  static i64 base, mod;
+};
 
-i64 xp[N];
+i64 XP1::base = 135;
+i64 XP1::mod = 1e9 + 7;
 
-void init_xp() {
-  xp[0] = 1;
-  for (int i = 1; i < N; i++) {
-    xp[i] = xp[i - 1] * x % p;
-  }
-}
+// struct XP2 {
+//   static i64 base, mod;
+// };
 
+// i64 XP2::base = 135;
+// i64 XP2::mod = 1e9 + 9;
+
+template <class T>
 struct Hash {
+  constexpr static i64 x() { return T::base; }
+  constexpr static i64 p() { return T::mod; }
+
+  static vector<i64> xp;
+
+  static void gen_xp(int n) {
+    if (xp.empty()) xp.push_back(1);
+    while ((int)xp.size() < n) {
+      xp.push_back(xp.back() * x() % p());
+    }
+  }
+
   vector<i64> h;
 
   Hash() : h(1) {}
 
-  void add(const string &s) {
+  void add(const string& s) {
     i64 res = h.back();
     for (char c : s) {
-      res = (res * x + c) % p;
+      res = (res * x() + c) % p();
       h.push_back(res);
     }
   }
@@ -40,53 +56,16 @@ struct Hash {
   // 0-indexed, [l, r]
   i64 get(int l, int r) {
     r++;
-    return (h[r] - h[l] * xp[r - l] % p + p) % p;
+    gen_xp(r - l + 1);
+    return (h[r] - h[l] * xp[r - l] % p() + p()) % p();
   }
 };
-```
 
-+ 双哈希
+template <class T>
+vector<i64> Hash<T>::xp;
 
-```cpp
-const int x = 135, p1 = 1e9 + 7, p2 = 1e9 + 9;
-const u64 mask32 = ~(0u);
-
-u64 xp1[N], xp2[N];
-
-void init_xp() {
-  xp1[0] = xp2[0] = 1;
-  for (int i = 1; i < N; i++) {
-    xp1[i] = xp1[i - 1] * x % p1;
-    xp2[i] = xp2[i - 1] * x % p2;
-  }
-}
-
-struct Hash {
-  vector<u64> h;
-
-  Hash() : h(1) {}
-
-  void add(const string& s) {
-    u64 res1 = h.back() >> 32;
-    u64 res2 = h.back() & mask32;
-    for (char c : s) {
-      res1 = (res1 * x + c) % p1;
-      res2 = (res2 * x + c) % p2;
-      h.push_back((res1 << 32) | res2);
-    }
-  }
-
-  // 0-indexed, [l, r]
-  u64 get(int l, int r) {
-    r++;
-    int len = r - l;
-    u64 l1 = h[l] >> 32, r1 = h[r] >> 32;
-    u64 l2 = h[l] & mask32, r2 = h[r] & mask32;
-    u64 res1 = (r1 - l1 * xp1[len] % p1 + p1) % p1;
-    u64 res2 = (r2 - l2 * xp2[len] % p2 + p2) % p2;
-    return (res1 << 32) | res2;
-  }
-};
+using H1 = Hash<XP1>;
+// using H2 = Hash<XP2>;
 ```
 
 + 二维哈希
