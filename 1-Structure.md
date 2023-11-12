@@ -1,5 +1,7 @@
 ## 数据结构
 
+**Unless specified, all data structure interfaces are 0-indexed, [l, r]**
+
 ### 并查集
 
 ```cpp
@@ -64,7 +66,6 @@ struct dsu {
 + 一维
 
 ```cpp
-// 下标从0开始
 struct RMQ {
   vector<vector<int>> st;
 
@@ -148,53 +149,33 @@ for (int i = 0, j = 0; i + k <= n; i++) {
 + 单点修改，区间和
 
 ```cpp
-// 支持第k大的BIT
-// 下标从1开始
+template <class T>
 struct fenwick {
   int n;
-  vector<i64> t;
-  fenwick(int n) : n(n), t(n + 1) {}
-  void add(int p, i64 x) {
-    // assert(p > 0);
-    for (; p <= n; p += p & -p) t[p] += x;
-  }
-  i64 get(int p) {
-    i64 a = 0;
-    for (; p > 0; p -= p & -p) a += t[p];
-    return a;
-  }
-  void set(int p, i64 x) { add(p, x - query(p, p)); }
-  i64 query(int l, int r) { return get(r) - get(l - 1); }
-
-  int kth(i64 k) {
-    int p = 0;
-    for (int i = __lg(n); i >= 0; i--) {
-      int p_ = p + (1 << i);
-      if (p_ <= n && t[p_] < k) {
-        k -= t[p_];
-        p = p_;
-      }
-    }
-    return p + 1;
-  }
-};
-```
-
-+ 下标从 0 开始
-
-```cpp
-struct fenwick {
-  int n;
-  vector<i64> t;
+  vector<T> t;
   fenwick(int n) : n(n), t(n) {}
-  void add(int p, i64 x) {
-    // assert(p >= 0);
+  void add(int p, T x) {
+    // assert(0 <= p && p < n);
     for (; p < n; p |= p + 1) t[p] += x;
   }
-  i64 get(int p) {
-    i64 a = 0;
-    for (; p >= 0; p = (p & (p + 1)) - 1) a += t[p];
-    return a;
+  T sum(int p) {
+    T ans = 0;
+    for (; p >= 0; p = (p & (p + 1)) - 1) ans += t[p];
+    return ans;
+  }
+  void set(int p, T x) { add(p, x - range_sum(p, p)); }
+  T range_sum(int l, int r) { return sum(r) - sum(l - 1); }
+
+  // smallest is 0-th
+  int kth(T k) {
+    int p = 0;
+    for (int i = 1 << __lg(n); i; i /= 2) {
+      if (p + i <= n && k >= t[p + i - 1]) {
+        p += i;
+        k -= t[p - 1];
+      }
+    }
+    return p;
   }
 };
 ```
@@ -221,32 +202,34 @@ void range_add(int l, int r, i64 x) {
 }
 
 i64 range_sum(int l, int r) {
-  return (r + 1) * t1.get(r) - t2.get(r) - l * t1.get(l - 1) + t2.get(l - 1);
+  return (r + 1) * t1.sum(r) - t2.sum(r) - l * t1.sum(l - 1) + t2.sum(l - 1);
 }
 ```
 
 + 二维
 
 ```cpp
-struct fenwick {
-  i64 t[N][N];
+template <class T>
+struct fenwick_2d {
+  int n, m;
+  vector<vector<T>> t;
 
-  int lowbit(int x) { return x & (-x); }
+  fenwick_2d(int n, int m) : n(n), m(m), t(n, vector<T>(m)) {}
 
-  void add(int x, int y, int d) {
-    for (int i = x; i <= n; i += lowbit(i))
-      for (int j = y; j <= m; j += lowbit(j)) t[i][j] += d;
+  void add(int x, int y, T d) {
+    for (int i = x; i < n; i |= i + 1)
+      for (int j = y; j < m; j |= j + 1) t[i][j] += d;
   }
 
-  i64 get(int x, int y) {
-    i64 sum = 0;
-    for (int i = x; i > 0; i -= lowbit(i))
-      for (int j = y; j > 0; j -= lowbit(j)) sum += t[i][j];
-    return sum;
+  T sum(int x, int y) {
+    T ans = 0;
+    for (int i = x; i >= 0; i = (i & (i + 1)) - 1)
+      for (int j = y; j >= 0; j = (j & (j + 1)) - 1) ans += t[i][j];
+    return ans;
   }
 
-  i64 query(int x, int y, int xx, int yy) {
-    return get(xx, yy) - get(x - 1, yy) - get(xx, y - 1) + get(x - 1, y - 1);
+  T range_sum(int x, int y, int xx, int yy) {
+    return sum(xx, yy) - sum(x - 1, yy) - sum(xx, y - 1) + sum(x - 1, y - 1);
   }
 };
 ```
@@ -270,24 +253,48 @@ void range_add(int x, int y, int xx, int yy, i64 d) {
   add4(xx + 1, yy + 1, d);
 }
 
-i64 get4(int x, int y) {
-  return (x + 1) * (y + 1) * t0.get(x, y)
-  - (y + 1) * t1.get(x, y)
-  - (x + 1) * t2.get(x, y)
-  + t3.get(x, y);
+i64 sum4(int x, int y) {
+  return (x + 1) * (y + 1) * t0.sum(x, y)
+  - (y + 1) * t1.sum(x, y)
+  - (x + 1) * t2.sum(x, y)
+  + t3.sum(x, y);
 }
 
 i64 range_sum(int x, int y, int xx, int yy) {
-  return get4(xx, yy) - get4(x - 1, yy) - get4(xx, y - 1) + get4(x - 1, y - 1);
+  return sum4(xx, yy) - sum4(x - 1, yy) - sum4(xx, y - 1) + sum4(x - 1, y - 1);
 }
 ```
 
 ### 线段树
 
++ zkw 线段树
+
+```cpp
+struct segt {
+  int n;
+  vector<int> d;
+  segt(int n) : n(n), d(2 * n, (int)-2e9) {}
+
+  void set(int p, int x) {
+    for (d[p += n] = x; p > 1; p /= 2) {
+      d[p / 2] = max(d[p], d[p ^ 1]);
+    }
+  }
+
+  int query(int l, int r) {
+    int res = -2e9;
+    for (l += n, r += n + 1; l < r; l /= 2, r /= 2) {
+      if (l & 1) res = max(res, d[l++]);
+      if (r & 1) res = max(res, d[--r]);
+    }
+    return res;
+  }
+};
+```
+
 + 单点修改，RMQ
 
 ```cpp
-// 下标从1开始
 // 必要时使用 const S& 卡常数
 template <class S>
 struct segtree {
@@ -323,19 +330,19 @@ struct segtree {
   }
 
   void set(int p, S x) {
-    p += size - 1;
+    p += size;
     d[p] = x;
     for (p >>= 1; p > 0; p >>= 1) pull(p);
   }
 
-  S get(int p) { return d[p + size - 1]; }
-  S query(int l, int r) { return ask(l, r, 1, 1, size); }
+  S get(int p) { return d[p + size]; }
+  S query(int l, int r) { return ask(l, r, 1, 0, size - 1); }
 
   // f(e()) = false
   // find the smallest r such that f(sum([l...r])) = true
   template <class F>
   int find_right(int l, F f) {
-    l += size - 1;
+    l += size;
     S s = e();
     do {
       while (l % 2 == 0) l >>= 1;
@@ -347,18 +354,18 @@ struct segtree {
             l++;
           }
         }
-        return l - size + 1;
+        return l - size;
       }
       s = op(s, d[l]);
       l++;
     } while ((l & -l) != l);
-    return _n + 1;
+    return _n;
   }
 
   // find the largest l such that f(sum([l...r])) = true
   template <class F>
   int find_left(int r, F f) {
-    r += size;
+    r += size + 1;
     S s = e();
     do {
       r--;
@@ -371,11 +378,11 @@ struct segtree {
             r--;
           }
         }
-        return r - size + 1;
+        return r - size;
       }
       s = op(d[r], s);
     } while ((r & -r) != r);
-    return 0;
+    return -1;
   }
 };
 
@@ -464,8 +471,8 @@ struct lazy_segtree {
     for (int i = size - 1; i >= 1; i--) pull(i);
   }
 
-  void update(int l, int r, F f) { modify(l, r, f, 1, 1, size); }
-  S query(int l, int r) { return ask(l, r, 1, 1, size); }
+  void update(int l, int r, F f) { modify(l, r, f, 1, 0, size - 1); }
+  S query(int l, int r) { return ask(l, r, 1, 0, size - 1); }
 
   // for binary search
   void push(int p) {
@@ -477,7 +484,7 @@ struct lazy_segtree {
   // find the smallest r such that f(sum([l...r])) = true
   template <class G>
   int find_right(int l, G f) {
-    l += size - 1;
+    l += size;
     for (int i = log; i >= 1; i--) push(l >> i);
     S s = e();
     do {
@@ -491,18 +498,18 @@ struct lazy_segtree {
             l++;
           }
         }
-        return l - size + 1;
+        return l - size;
       }
       s = op(s, d[l]);
       l++;
     } while ((l & -l) != l);
-    return _n + 1;
+    return _n;
   }
 
   // find the largest l such that f(sum([l...r])) = true
   template <class G>
   int find_left(int r, G f) {
-    r += size;
+    r += size + 1;
     for (int i = log; i >= 1; i--) push((r - 1) >> i);
     S s = e();
     do {
@@ -517,11 +524,11 @@ struct lazy_segtree {
             r--;
           }
         }
-        return r - size + 1;
+        return r - size;
       }
       s = op(d[r], s);
     } while ((r & -r) != r);
-    return 0;
+    return -1;
   }
 };
 
@@ -585,8 +592,8 @@ struct SegT {
     return max(vl, vr);
   }
 
-  void update(int k, int val) { rt = modify(rt, 1, size, k, val); }
-  int query(int l, int r) { return ask(rt, 1, size, l, r); }
+  void update(int k, int val) { rt = modify(rt, 0, size - 1, k, val); }
+  int query(int l, int r) { return ask(rt, 0, size - 1, l, r); }
 
 #undef mid
 };
@@ -633,11 +640,11 @@ struct FST {
   }
 
   void add(int x) {
-    root.push_back(ins(root.back(), 1, size, x));
+    root.push_back(ins(root.back(), 0, size - 1, x));
   }
 
   int query(int l, int r, int k) {
-    return ask(root[l - 1], root[r], 1, size, k);
+    return ask(root[l - 1], root[r], 0, size - 1, k);
   }
 
 #undef mid
@@ -874,7 +881,7 @@ void CDQ(int l, int r) {
 }
 
 void go() {
-  sort(p + 1, p + n + 1, [](const Node &a, const Node &b) {
+  sort(p, p + n, [](const Node &a, const Node &b) {
     if (a.x != b.x) return a.x < b.x;
     if (a.y != b.y) return a.y < b.y;
     return a.z < b.z;
@@ -883,13 +890,13 @@ void go() {
     return a.x == b.x && a.y == b.y && a.z == b.z;
   };
   int k = n;
-  for (int i = 1, j = 1; i <= n; i++, j++) {
+  for (int i = 0, j = 0; i < n; i++, j++) {
     if (eq(p[i], p[j - 1])) j--, k--;
     else if (i != j) p[j] = p[i];
     p[j].sum++;
   }
   bit.init(m);
-  CDQ(1, k);
+  CDQ(0, k - 1);
 }
 ```
 
