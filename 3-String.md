@@ -176,6 +176,7 @@ struct Manacher {
 
 ```cpp
 // 前缀函数（每一个前缀的最长公共前后缀）
+// [0...i] 的最小循环节是 i + 1 - a[i]
 vector<int> get_pi(const string& s) {
   int n = s.size();
   vector<int> a(n);
