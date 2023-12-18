@@ -503,35 +503,47 @@ struct SAM {
 ### 后缀数组
 
 ```cpp
-// 下标从1开始
+// 下标从0开始
 // sa[i]: 排名为i的后缀位置
 // rk[i]: 第i个后缀的排名
-// ht[i]: LCP(sa[i], sa[i - 1])
-struct SA {
-  int n, m;
-  vector<int> a, d, sa, rk, ht;
-
-  void rsort() {
-    vector<int> c(m + 1);
-    for (int i = 1; i <= n; i++) c[rk[d[i]]]++;
-    for (int i = 1; i <= m; i++) c[i] += c[i - 1];
-    for (int i = n; i; i--) sa[c[rk[d[i]]]--] = d[i];
-  }
-
-  SA(const string& s) : n(s.size()), m(128), a(n + 1), d(n + 1), sa(n + 1), rk(n + 1), ht(n + 1) {
-    for (int i = 1; i <= n; i++) { rk[i] = a[i] = s[i - 1]; d[i] = i; }
-    rsort();
-    for (int j = 1, i, k; k < n; m = k, j <<= 1) {
-      for (i = n - j + 1, k = 0; i <= n; i++) d[++k] = i;
-      for (i = 1; i <= n; i++) if (sa[i] > j) d[++k] = sa[i] - j;
-      rsort(); swap(rk, d); rk[sa[1]] = k = 1;
-      for (i = 2; i <= n; i++) {
-        rk[sa[i]] = (d[sa[i]] == d[sa[i - 1]] && d[sa[i] + j] == d[sa[i - 1] + j]) ? k : ++k;
-      }
+// lc[i]: LCP(sa[i], sa[i + 1])
+struct SuffixArray {
+  int n;
+  vector<int> sa, rk, lc;
+  SuffixArray(const string& s) {
+    n = s.length();
+    sa.resize(n);
+    lc.resize(n - 1);
+    rk.resize(n);
+    iota(sa.begin(), sa.end(), 0);
+    sort(sa.begin(), sa.end(), [&](int a, int b) { return s[a] < s[b]; });
+    rk[sa[0]] = 0;
+    for (int i = 1; i < n; ++i) rk[sa[i]] = rk[sa[i - 1]] + (s[sa[i]] != s[sa[i - 1]]);
+    int k = 1;
+    vector<int> tmp, cnt(n);
+    tmp.reserve(n);
+    while (rk[sa[n - 1]] < n - 1) {
+      tmp.clear();
+      for (int i = 0; i < k; ++i) tmp.push_back(n - k + i);
+      for (auto i : sa)
+        if (i >= k) tmp.push_back(i - k);
+      fill(cnt.begin(), cnt.end(), 0);
+      for (int i = 0; i < n; ++i) ++cnt[rk[i]];
+      for (int i = 1; i < n; ++i) cnt[i] += cnt[i - 1];
+      for (int i = n - 1; i >= 0; --i) sa[--cnt[rk[tmp[i]]]] = tmp[i];
+      swap(rk, tmp);
+      rk[sa[0]] = 0;
+      for (int i = 1; i < n; ++i)
+        rk[sa[i]] = rk[sa[i - 1]] + (tmp[sa[i - 1]] < tmp[sa[i]] || sa[i - 1] + k == n || tmp[sa[i - 1] + k] < tmp[sa[i] + k]);
+      k *= 2;
     }
-    int j, k = 0;
-    for (int i = 1; i <= n; ht[rk[i++]] = k) {
-      for (k ? k-- : k, j = sa[rk[i] - 1]; a[i + k] == a[j + k]; ++k);
+    for (int i = 0, j = 0; i < n; ++i) {
+      if (rk[i] == 0) {
+        j = 0;
+      } else {
+        for (j -= j > 0; i + j < n && sa[rk[i] - 1] + j < n && s[i + j] == s[sa[rk[i] - 1] + j];) ++j;
+        lc[rk[i] - 1] = j;
+      }
     }
   }
 };
