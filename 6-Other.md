@@ -122,6 +122,7 @@ for (int i = 0; i < k; i++)
 ### 最长不下降子序列
 
 ```cpp
+// dp[i]: 长度为 i+1 的 lis 的末尾元素的最小值
 template <class T>
 int lis(const vector<T>& a) {
   vector<T> dp(a.size() + 1, numeric_limits<T>::max());
