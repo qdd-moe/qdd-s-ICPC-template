@@ -28,61 +28,84 @@ for (int i = mp[u]; i != -1; i = es[i].nxt)
 + Dijkstra
 
 ```cpp
-struct Edge {
-  int to, val;
-  Edge(int to = 0, int val = 0) : to(to), val(val) {}
-};
+struct Dijkstra {
+  struct Edge {
+    int to, val;
+    Edge(int to = 0, int val = 0) : to(to), val(val) {}
+  };
 
-vector<Edge> g[N];
-i64 dis[N];
+  int n;
+  vector<vector<Edge>> g;
 
-void dijkstra(int s) {
-  using pii = pair<i64, int>;
-  memset(dis, 0x3f, sizeof(dis));
-  priority_queue<pii, vector<pii>, greater<pii> > q;
-  dis[s] = 0;
-  q.emplace(0, s);
-  while (!q.empty()) {
-    pii p = q.top();
-    q.pop();
-    int u = p.second;
-    if (dis[u] < p.first) continue;
-    for (Edge& e : g[u]) {
-      int v = e.to;
-      if (umin(dis[v], dis[u] + e.val)) {
-        q.emplace(dis[v], v);
+  Dijkstra(int n) : n(n), g(n) {}
+
+  void add_edge(int u, int v, int val) { g[u].emplace_back(v, val); }
+
+  vector<i64> solve(int s) {
+    using pii = pair<i64, int>;
+    vector<i64> dis(n, 1LL << 60);
+    priority_queue<pii, vector<pii>, greater<pii>> q;
+    dis[s] = 0;
+    q.emplace(0, s);
+    while (!q.empty()) {
+      pii p = q.top();
+      q.pop();
+      int u = p.second;
+      if (dis[u] < p.first) continue;
+      for (Edge& e : g[u]) {
+        int v = e.to;
+        if (dis[v] > dis[u] + e.val) {
+          dis[v] = dis[u] + e.val;
+          q.emplace(dis[v], v);
+        }
       }
     }
+    return dis;
   }
-}
+};
 ```
 
 + SPFA
 
 ```cpp
-void spfa(int s) {
-  queue<int> q;
-  q.push(s);
-  memset(dis, 0x3f, sizeof(dis));
-  memset(in, 0, sizeof(in));
-  in[s] = 1;
-  dis[s] = 0;
-  while (!q.empty()) {
-    int u = q.front();
-    q.pop();
-    for (Edge& e : g[u]) {
-      int v = e.to;
-      if (dis[v] > dis[u] + e.val) {
-        dis[v] = dis[u] + e.val;
-        if (!in[v]) {
-          in[v] = 1;
-          q.push(v);
+struct SPFA {
+  struct Edge {
+    int to, val;
+    Edge(int to = 0, int val = 0) : to(to), val(val) {}
+  };
+
+  int n;
+  vector<vector<Edge>> g;
+
+  SPFA(int n) : n(n), g(n) {}
+
+  void add_edge(int u, int v, int val) { g[u].emplace_back(v, val); }
+
+  vector<i64> solve(int s) {
+    queue<int> q;
+    vector<i64> dis(n, 1LL << 60);
+    vector<bool> in(n, 0);
+    q.push(s);
+    dis[s] = 0;
+    in[s] = 1;
+    while (!q.empty()) {
+      int u = q.front();
+      q.pop();
+      in[u] = 0;
+      for (Edge& e : g[u]) {
+        int v = e.to;
+        if (dis[v] > dis[u] + e.val) {
+          dis[v] = dis[u] + e.val;
+          if (!in[v]) {
+            in[v] = 1;
+            q.push(v);
+          }
         }
       }
     }
-    in[u] = 0;
+    return dis;
   }
-}
+};
 ```
 
 + Floyd 最小环
