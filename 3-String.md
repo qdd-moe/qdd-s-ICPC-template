@@ -28,7 +28,7 @@ struct Hash {
     for (int i = 0; i < n; i++) h[i + 1] = (mul(h[i], step) + s[i]) % md;
   }
 
-  i64 operator()(int l, int r) { return (h[r + 1] - mul(h[l], pw[r - l + 1]) % md + md) % md; }
+  i64 operator()(int l, int r) { return (h[r + 1] - mul(h[l], pw[r - l + 1]) + md) % md; }
 };
 
 i64 Hash::step = uniform_int_distribution<i64>(256, md - 1)(rng);
