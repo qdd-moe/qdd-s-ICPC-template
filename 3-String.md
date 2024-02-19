@@ -6,63 +6,34 @@
 // open hack
 mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-i64 random_prime(i64 l, i64 r) {
-  for (;;) {
-    i64 x = rng() % (r - l + 1) + l;
-    if (isprime(x)) return x;
-  }
-}
-
-struct XP1 {
-  static i64 base, mod;
-};
-
-i64 XP1::base = 135;
-i64 XP1::mod = 1e9 + 7;
-
-// struct XP2 {
-//   static i64 base, mod;
-// };
-
-// i64 XP2::base = 135;
-// i64 XP2::mod = 1e9 + 9;
-
-template <class T>
 struct Hash {
-  static vector<i64> xp;
+  static const i64 md = (1LL << 61) - 1;
+  static i64 step;
+  static vector<i64> pw;
 
-  static void gen_xp(int n) {
-    if (xp.empty()) xp.push_back(1);
-    while ((int)xp.size() < n) {
-      xp.push_back(xp.back() * T::base % T::mod);
-    }
+  static i64 mul(i64 a, i64 b) { return (i64)(__int128(a) * b % md); }
+
+  static void init(int N) {
+    pw.resize(N + 1);
+    pw[0] = 1;
+    for (int i = 1; i <= N; i++) pw[i] = mul(pw[i - 1], step);
   }
 
   vector<i64> h;
 
-  Hash() : h(1) {}
-
-  void add(const string& s) {
-    i64 res = h.back();
-    for (char c : s) {
-      res = (res * T::base + c) % T::mod;
-      h.push_back(res);
-    }
+  template <class T>
+  Hash(const T& s) {
+    int n = s.size();
+    h.resize(n + 1);
+    for (int i = 0; i < n; i++) h[i + 1] = (mul(h[i], step) + s[i]) % md;
   }
 
-  // 0-indexed, [l, r]
-  i64 get(int l, int r) {
-    r++;
-    gen_xp(r - l + 1);
-    return (h[r] - h[l] * xp[r - l] % T::mod + T::mod) % T::mod;
-  }
+  i64 operator()(int l, int r) { return (h[r + 1] - mul(h[l], pw[r - l + 1]) % md + md) % md; }
 };
 
-template <class T>
-vector<i64> Hash<T>::xp;
-
-using H1 = Hash<XP1>;
-// using H2 = Hash<XP2>;
+i64 Hash::step = uniform_int_distribution<i64>(256, md - 1)(rng);
+vector<i64> Hash::pw;
+int _ = (Hash::init(1e6), 0);
 ```
 
 + 二维哈希
