@@ -1,9 +1,9 @@
-## 杂项
+## Miscellaneous
 
-### 二分答案
+### Binary Search
 
 ```cpp
-// 二分闭区间[l, r]
+// [l, r]
 template <class T, class F>
 T min_left(T l, T r, F f) {
   while (l < r) {
@@ -23,24 +23,24 @@ T max_right(T l, T r, F f) {
 }
 ```
 
-### 三分
+### Ternary Search
 
 ```cpp
-// 实数范围
+// for real numbers
 double l, r, mid1, mid2;
 for (int i = 0; i < 75; i++) {
   mid1 = (l * 5 + r * 4) / 9;
   mid2 = (l * 4 + r * 5) / 9;
-  if (f(mid1) > f(mid2)) r = mid2; // 单峰函数取'>'号，单谷函数取'<'号
+  if (f(mid1) > f(mid2)) r = mid2; // find the maximum, otherwise use '<'
   else l = mid1;
 }
 
-// 整数范围
+// for integers
 int l, r, mid1, mid2;
 while (l < r - 2) {
   mid1 = (l + r) / 2;
   mid2 = mid1 + 1;
-  if (f(mid1) > f(mid2)) r = mid2; // 单峰函数取'>'号，单谷函数取'<'号
+  if (f(mid1) > f(mid2)) r = mid2; // find the maximum, otherwise use '<'
   else l = mid1;
 }
 int maxval = f(l), ans = l;
@@ -49,10 +49,10 @@ for (int i = l + 1; i <= r; i++) {
 }
 ```
 
-### 日期
+### Date
 
 ```cpp
-// 0 ~ 6 对应 周一 ~ 周日
+// 0 ~ 6 corresponds to Monday ~ Sunday
 int zeller(int y, int m, int d) {
   if (m <= 2) m += 12, y--;
   return (d + 2 * m + 3 * (m + 1) / 5 + y + y / 4 - y / 100 + y / 400) % 7;
@@ -84,14 +84,14 @@ void int_to_date(int jd, int &y, int &m, int &d) {
 }
 ```
 
-### 子集枚举
+### Subset Enumeration
 
 ```cpp
-// 枚举真子集
+// all strict subsets
 for (int t = (x - 1) & x; t; t = (t - 1) & x)
 
-// 枚举大小为 k 的子集
-// 注意 k 不能为 0
+// subsets of size k
+// Note: k cannot be 0
 void subset(int k, int n) {
   int t = (1 << k) - 1;
   while (t < (1 << n)) {
@@ -101,28 +101,28 @@ void subset(int k, int n) {
   }
 }
 
-// 枚举超集
+// enumerate supersets
 for (int t = (x + 1) | x; t < (1 << n); t = (t + 1) | x)
 ```
 
-### 高维前缀和
+### Sum Over Subsets DP
 
 ```cpp
-// 子集和
+// sum over subsets
 for (int i = 0; i < k; i++)
   for (int s = 0; s < (1 << k); s++)
     if ((s >> i) & 1) dp[s] += dp[s - (1 << i)];
 
-// 超集和
+// sum over supersets
 for (int i = 0; i < k; i++)
   for (int s = 0; s < (1 << k); s++)
     if (!((s >> i) & 1)) dp[s] += dp[s + (1 << i)];
 ```
 
-### 最长不下降子序列
+### Longest Non-Decreasing Subsequence
 
 ```cpp
-// dp[i]: 长度为 i+1 的 lis 的末尾元素的最小值
+// dp[i]: the minimum value of the last element of a non-decreasing subsequence with length i+1
 template <class T>
 int lis(const vector<T>& a) {
   vector<T> dp(a.size() + 1, numeric_limits<T>::max());
@@ -133,7 +133,7 @@ int lis(const vector<T>& a) {
   return ans;
 }
 
-// 输出方案
+// output actual solution
 template <class T>
 vector<int> lis(const vector<T>& S) {
   if (S.empty()) return {};
@@ -154,7 +154,7 @@ vector<int> lis(const vector<T>& S) {
 }
 ```
 
-### 分治 dp
+### Divide and Conquer DP
 
 ```cpp
 vector<i64> dp(n), new_dp(n);
@@ -183,7 +183,7 @@ for (int i = 1; i <= k; i++) {
 // return dp[n - 1];
 ```
 
-### 格雷码
+### Gray Code
 
 ```cpp
 int g(int n) { return n ^ (n >> 1); }
@@ -195,10 +195,10 @@ int rev_g(int g) {
 }
 ```
 
-### 数位 dp
+### Digit DP
 
 ```cpp
-// Kick Start 2022 数位和整除数位积的数的个数
+// Kick Start 2022: the number of integers s.t. prod(digits) % sum(digits) == 0
 const int N = 110;
 i64 dp[15][N][N], a[15];
 int mod;
@@ -230,7 +230,7 @@ i64 cal(i64 x) {
   return ans;
 }
 
-// 小于等于 x 的 base 进制下回文数个数
+// the number of "palindromes" <= x, with any base
 i64 dp[20][20][20][2], tmp[20], a[20];
 
 i64 dfs(i64 base, i64 pos, i64 len, i64 s, bool limit) {
@@ -262,7 +262,7 @@ i64 solve(i64 x, i64 base) {
 }
 ```
 
-### 大范围洗牌算法
+### Random Set
 
 ```cpp
 vector<int> randset(int l, int r, int k) {
@@ -280,14 +280,14 @@ vector<int> randset(int l, int r, int k) {
 }
 ```
 
-### 表达式求值
+### Expression Evaluation
 
 ```py
 print(input()) # Python2
 print(eval(input())) # Python3
 ```
 
-### 对拍
+### Stress Test
 
 + *unix
 
@@ -295,9 +295,9 @@ print(eval(input())) # Python3
 #!/bin/bash
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
-g++ gen.cpp -o gen -O2 -std=c++11
-g++ my.cpp -o my -O2 -std=c++11
-g++ std.cpp -o std -O2 -std=c++11
+g++ gen.cpp -o gen -O2 -std=c++17
+g++ my.cpp -o my -O2 -std=c++17
+g++ std.cpp -o std -O2 -std=c++17
 
 while true
 do
@@ -326,9 +326,9 @@ done
 ```
 @echo off
 
-g++ gen.cpp -o gen.exe -O2 -std=c++11
-g++ my.cpp -o my.exe -O2 -std=c++11
-g++ std.cpp -o std.exe -O2 -std=c++11
+g++ gen.cpp -o gen.exe -O2 -std=c++17
+g++ my.cpp -o my.exe -O2 -std=c++17
+g++ std.cpp -o std.exe -O2 -std=c++17
 
 :loop
     gen.exe > in.txt
@@ -348,7 +348,7 @@ g++ std.cpp -o std.exe -O2 -std=c++11
 goto loop
 ```
 
-### 防爆vector
+### Safe std::vector
 
 ```cpp
 namespace std {
@@ -364,7 +364,7 @@ public:
 #define vector vector_s
 ```
 
-### hash
+### More Hash
 
 ```cpp
 template<class T1, class T2>
@@ -395,14 +395,14 @@ struct custom_hash {
 unordered_map<i64, int, custom_hash> safe_map;
 ```
 
-### updmax/min
+### Max/Min with Assignment
 
 ```cpp
 template <class T, class U> bool umax(T& a, U b) { return a < b ? a = b, 1 : 0; }
 template <class T, class U> bool umin(T& a, U b) { return a > b ? a = b, 1 : 0; }
 ```
 
-### split/join
+### Split and Join
 
 ```cpp
 vector<string> split(const string& s, string sep) {
@@ -425,10 +425,10 @@ string join(const vector<T>& v, string sep) {
 }
 ```
 
-### 离散化
+### Discretization
 
 ```cpp
-// 重复元素id不同
+// repeating elements with different id
 template<class T>
 vector<int> dc(const vector<T>& a, int start_id) {
   int n = a.size();
@@ -444,7 +444,7 @@ vector<int> dc(const vector<T>& a, int start_id) {
   return id;
 }
 
-// 重复元素id相同
+// repeating elements with same id
 template<class T>
 vector<int> unique_dc(const vector<T>& a, int start_id) {
   int n = a.size();
@@ -459,7 +459,7 @@ vector<int> unique_dc(const vector<T>& a, int start_id) {
 }
 ```
 
-### 合并同类项
+### Merge Same Items
 
 ```cpp
 template <class T>
@@ -476,7 +476,7 @@ vector<pair<T, int> > norm(vector<T>& v) {
 }
 ```
 
-### 加强版优先队列
+### Priority Queue with Erase
 
 ```cpp
 struct heap {
@@ -495,7 +495,7 @@ struct heap {
 };
 ```
 
-### 分数
+### Fractions
 
 ```cpp
 template <class T>
@@ -539,7 +539,7 @@ ostream& operator<<(ostream& os, const Frac<T>& f) {
 
 ### ModInt
 
-+ 工业级 ModInt
++ Industrial ModInt
 
 ```cpp
 // tourist
@@ -1134,7 +1134,7 @@ public class Main {
 }
 ```
 
-+ 皮特老师读入挂
++ Petr's ultimate fast input
 
 ```java
 public class Main {
@@ -1174,7 +1174,7 @@ public class Main {
 }
 ```
 
-+ 大整数
++ BigInteger
 
 ```java
 import java.math.BigInteger;
@@ -1234,7 +1234,7 @@ public static BigInteger getsqrt(BigInteger n) {
 }
 ```
 
-+ 浮点数格式
++ DecimalFormat
 
 ```java
 import java.text.DecimalFormat;
