@@ -1,4 +1,4 @@
-## Mathematics
+## Math
 
 ### GCD & LCM
 

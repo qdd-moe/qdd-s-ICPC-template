@@ -1,6 +1,6 @@
-## 计算几何
+## Geometry
 
-### 二维几何基础
+### 2D Geometry Basics
 
 ```cpp
 #define y1 qwq
@@ -12,7 +12,7 @@ const ld EPS = 1e-8;
 
 int sgn(ld x) { return x < -EPS ? -1 : x > EPS; }
 
-// 不要直接使用sgn
+// don't use sgn directly
 bool eq(ld x, ld y) { return sgn(x - y) == 0; }
 bool ne(ld x, ld y) { return sgn(x - y) != 0; }
 bool lt(ld x, ld y) { return sgn(x - y) < 0; }
@@ -41,7 +41,7 @@ ld cross(V s, V t, V o) { return det(s - o, t - o); }
 
 ld to_rad(ld deg) { return deg / 180 * PI; }
 
-// 象限
+// quadrant
 int quad(V p) {
   int x = sgn(p.x), y = sgn(p.y);
   if (x > 0 && y >= 0) return 1;
@@ -51,7 +51,7 @@ int quad(V p) {
   assert(0);
 }
 
-// 极角排序
+// sorting by polar angle
 struct cmp_angle {
   V p;
   cmp_angle(V p = V()) : p(p) {}
@@ -64,75 +64,75 @@ struct cmp_angle {
   }
 };
 
-// 单位向量
+// unit vector
 V unit(V p) { return eq(p.len(), 0) ? V(1, 0) : p / p.len(); }
 
-// 逆时针旋转 r 弧度
+// rotate conterclockwise by r radians
 V rot(V p, ld r) {
   return V(p.x * cos(r) - p.y * sin(r), p.x * sin(r) + p.y * cos(r));
 }
 V rot_ccw90(V p) { return V(-p.y, p.x); }
 V rot_cw90(V p) { return V(p.y, -p.x); }
 
-// 点在线段上 le(dot(...), 0) 包含端点 lt(dot(...), 0) 则不包含
+// point on segment, le(dot(...) , 0) contains endpoints, lt(dot(...) , 0) otherwise
 bool p_on_seg(V p, V a, V b) {
   return eq(det(p - a, b - a), 0) && le(dot(p - a, p - b), 0);
 }
 
-// 点在射线上 ge(dot(...), 0) 包含端点 gt(dot(...), 0) 则不包含
+// point on ray, ge(dot(...) , 0) contains endpoints, gt(dot(...) , 0) otherwise
 bool p_on_ray(V p, V a, V b) {
   return eq(det(p - a, b - a), 0) && ge(dot(p - a, b - a), 0);
 }
 
-// 求直线交点
+// intersection of lines
 V intersect(V a, V b, V c, V d) {
   ld s1 = cross(c, d, a), s2 = cross(c, d, b);
   return (a * s2 - b * s1) / (s2 - s1);
 }
 
-// 点在直线上的投影点
+// projection of a point onto a line
 V proj(V p, V a, V b) {
   return a + (b - a) * dot(b - a, p - a) / (b - a).len2();
 }
 
-// 点关于直线的对称点
+// symmetric point about a line
 V reflect(V p, V a, V b) {
   return proj(p, a, b) * 2 - p;
 }
 
-// 点到线段的最近点
+// closest point on segment
 V closest_point_on_seg(V p, V a, V b) {
   if (lt(dot(b - a, p - a), 0)) return a;
   if (lt(dot(a - b, p - b), 0)) return b;
   return proj(p, a, b);
 }
 
-// 三角形重心
+// centroid
 V centroid(V a, V b, V c) {
   return (a + b + c) / 3;
 }
 
-// 内心
+// incenter
 V incenter(V a, V b, V c) {
   ld AB = dist(a, b), AC = dist(a, c), BC = dist(b, c);
   // ld r = abs(cross(b, c, a)) / (AB + AC + BC);
   return (a * BC + b * AC + c * AB) / (AB + BC + AC);
 }
 
-// 外心
+// circumcenter
 V circumcenter(V a, V b, V c) {
   V mid1 = (a + b) / 2, mid2 = (a + c) / 2;
   // ld r = dist(a, b) * dist(b, c) * dist(c, a) / 2 / abs(cross(b, c, a));
   return intersect(mid1, mid1 + rot_ccw90(b - a), mid2, mid2 + rot_ccw90(c - a));
 }
 
-// 垂心
+// orthocenter
 V orthocenter(V a, V b, V c) {
   return centroid(a, b, c) * 3 - circumcenter(a, b, c) * 2;
 }
 
-// 旁心（三个）
-vector<V> escenter(V a, V b, V c) {
+// excenters (opposite to a, b, c)
+vector<V> excenters(V a, V b, V c) {
   ld AB = dist(a, b), AC = dist(a, c), BC = dist(b, c);
   V p1 = (a * (-BC) + b * AC + c * AB) / (AB + AC - BC);
   V p2 = (a * BC + b * (-AC) + c * AB) / (AB - AC + BC);
@@ -141,10 +141,10 @@ vector<V> escenter(V a, V b, V c) {
 }
 ```
 
-### 多边形
+### Polygons
 
 ```cpp
-// 多边形面积
+// polygon area
 ld area(const vector<V>& s) {
   ld ret = 0;
   for (int i = 0; i < s.size(); i++) {
@@ -153,7 +153,7 @@ ld area(const vector<V>& s) {
   return ret / 2;
 }
 
-// 多边形重心
+// polygon centroid
 V centroid(const vector<V>& s) {
   V c;
   for (int i = 0; i < s.size(); i++) {
@@ -162,7 +162,7 @@ V centroid(const vector<V>& s) {
   return c / 6.0 / area(s);
 }
 
-// 点是否在多边形中
+// point and polygon
 // 1 inside 0 on border -1 outside
 int inside(const vector<V>& s, V p) {
   int cnt = 0;
@@ -177,9 +177,9 @@ int inside(const vector<V>& s, V p) {
   return (cnt & 1) ? 1 : -1;
 }
 
-// 构建凸包 点不可以重复
-// lt(cross(...), 0) 边上可以有点 le(cross(...), 0) 则不能
-// 会改变输入点的顺序
+// convex hull, points cannot be duplicated
+// lt(cross(...), 0) allow point on edges le(cross(...), 0) otherwise
+// will change the order of the input points
 vector<V> convex_hull(vector<V>& s) {
   // assert(s.size() >= 3);
   sort(s.begin(), s.end(), [](V &a, V &b) { return eq(a.x, b.x) ? lt(a.y, b.y) : lt(a.x, b.x); });
@@ -198,7 +198,7 @@ vector<V> convex_hull(vector<V>& s) {
   return ret;
 }
 
-// 多边形是否为凸包
+// is convex?
 bool is_convex(const vector<V>& s) {
   for (int i = 0; i < s.size(); i++) {
     if (lt(cross(s[(i + 1) % s.size()], s[(i + 2) % s.size()], s[i]), 0)) return false;
@@ -206,7 +206,7 @@ bool is_convex(const vector<V>& s) {
   return true;
 }
 
-// 点是否在凸包中
+// point and convex hull
 // 1 inside 0 on border -1 outside
 int inside(const vector<V>& s, V p) {
   for (int i = 0; i < s.size(); i++) {
@@ -216,7 +216,7 @@ int inside(const vector<V>& s, V p) {
   return 1;
 }
 
-// 最近点对, 先要按照 x 坐标排序
+// closest pair of points, sort by x-coordinate first
 // min_dist(s, 0, s.size())
 ld min_dist(const vector<V>& s, int l, int r) {
   if (r - l <= 5) {
@@ -244,7 +244,7 @@ ld min_dist(const vector<V>& s, int l, int r) {
 }
 ```
 
-### 圆
+### Circles
 
 ```cpp
 struct C {
@@ -253,10 +253,10 @@ struct C {
   C(V o, ld r) : o(o), r(r) {}
 };
 
-// 扇形面积，半径 r 圆心角 d
+// sector area, radius r, angle d
 ld area_sector(ld r, ld d) { return r * r * d / 2; }
 
-// 过一点求圆的切线，返回切点
+// find the tangent line to a circle and return the tangent point
 vector<V> tangent_point(C c, V p) {
   ld k = c.r / dist(c.o, p);
   if (gt(k, 1)) return vector<V>();
@@ -265,7 +265,7 @@ vector<V> tangent_point(C c, V p) {
   return {c.o + rot(a, acos(k)), c.o + rot(a, -acos(k))};
 }
 
-// 最小圆覆盖
+// minimum covering circle
 C min_circle_cover(vector<V> a) {
   shuffle(a.begin(), a.end(), rng);
   V o = a[0];
@@ -286,7 +286,7 @@ C min_circle_cover(vector<V> a) {
 }
 ```
 
-### 三维几何
+### 3D Geometry
 
 ```cpp
 struct V {
