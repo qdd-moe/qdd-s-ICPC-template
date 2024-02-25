@@ -1,8 +1,8 @@
-## 待验证
+## Unverified
 
-**版权归原作者所有 部分代码有风格调整 不保证内容的正确性**
+**Copyright belongs to the original author. Some code has style adjustments. Not guaranteed to be correct.**
 
-### 吉利线段树
+### Segment Tree Beats
 
 ```cpp
 // Nyaan
@@ -199,11 +199,11 @@ struct AngelBeats {
 };
 ```
 
-### 约瑟夫问题
+### Josephus Problem
 
 ```cpp
-// n个人，1至m报数，问最后留下来的人的编号
-// 公式：f(n,m)=(f(n−1,m)+m)%n，f(0,m)=0;
+// n people, count from 1 to m, asking for the number of the last person remaining
+// Formula: f(n,m)=(f(n−1,m)+m)%n, f(0,m)=0;
 // O(n)
 i64 calc(int n, i64 m) {
     i64 p = 0;
@@ -213,8 +213,8 @@ i64 calc(int n, i64 m) {
     return p + 1;
 }
 
-// n个人，1至m报数，问第k个出局的人的编号
-// 公式：f(n,k)=(f(n−1,k−1)+m−1)%n+1
+// n people, count from 1 to m, asking for the number of the k-th person eliminated
+// Formula: f(n,k)=(f(n−1,k−1)+m−1)%n+1
 // f(n−k+1,1)=m%(n−k+1)
 // if (f==0) f=n−k+1
 // O(k)
@@ -227,7 +227,7 @@ i64 cal1(i64 n, i64 m, i64 k) {  // (k == n) equal(calc)
     return p;
 }
 
-// n个人，1至m报数，问第k个出局的人的编号
+// n people, count from 1 to m, asking for the number of the k-th person eliminated
 // O(m*log(m))
 i64 cal2(i64 n, i64 m, i64 k) {
     if (m == 1)
@@ -249,10 +249,10 @@ i64 cal2(i64 n, i64 m, i64 k) {
     }
 }
 
-// n个人，1至m报数，问编号为k的人是第几个出局的
+// n people, count from 1 to m, asking for the number of the person with index k eliminated
 // O(n)
-i64 n, k;  //可做n<=4e7,询问个数<=100,下标范围[0,n-1]
-i64 dieInXturn(int n, int k, int x) {  // n个人，报数k，下标为X的人第几个死亡
+i64 n, k;  // n <= 4e7, number of queries <= 100, index range [0,n-1]
+i64 dieInXturn(int n, int k, int x) {  // n people, count k, the X-th person dies with index X
     i64 tmp = 0;
     while (n) {
         x = (x + n) % n;
@@ -278,15 +278,15 @@ i64 dieInXturn(int n, int k, int x) {  // n个人，报数k，下标为X的人�
 }
 ```
 
-### 字典序最小2sat
+### Lexicographically Smallest Solution of 2-SAT
 
 ```cpp
 const int N = 1e5 + 10;
-struct TwoSatBF {  // 暴力求解字典序最小的解
+struct TwoSatBF {  // Brute-force to find the lexicographically smallest solution
   int n;
   vector<int> G[N << 1];
   bool slt[N << 1];
-  // 偶数点：false 奇数点：true 这样x^1就是反面
+  // Even points: false Odd points: true So x^1 is the opposite side
   void init(int _n) {
     n = _n;
     for (int i = 0; i < (n << 1); ++i) {
@@ -295,7 +295,7 @@ struct TwoSatBF {  // 暴力求解字典序最小的解
     }
   }
   void addLimit(int x, int y) {
-    // 选了x就要选y，具体看情况使用
+    // If x is chosen, y must be chosen as well, depending on the situation
     G[x].push_back(y);
     G[y ^ 1].push_back(x ^ 1);
   }
@@ -325,7 +325,7 @@ struct TwoSatBF {  // 暴力求解字典序最小的解
         if (!dfs(u)) {
           clearst();
           if (!dfs(u ^ 1)) {
-            return fales;
+            return false;
           }
         }
       }
@@ -335,7 +335,7 @@ struct TwoSatBF {  // 暴力求解字典序最小的解
 };
 ```
 
-### 二分图最大权匹配KM
+### Weighted Bipartite Matching (KM Algorithm)
 
 ```cpp
 // ECNU
@@ -459,7 +459,7 @@ struct HLPP {
 };
 ```
 
-### 上下界网络流
+### Flow with Lower Bounds
 
 ```cpp
 const int INF = 0x3f3f3f3f;
@@ -629,7 +629,7 @@ void solve() {
 }
 ```
 
-### 树链剖分
+### Heavy-Light Decomposition
 
 ```cpp
 // jiangly
@@ -844,7 +844,7 @@ int main() {
 }
 ```
 
-### 任意模数 NTT
+### NTT for NTT-unfriendly Modulus
 
 ```cpp
 // memset0
@@ -895,10 +895,10 @@ void go() {
 }
 ```
 
-### 计算几何
+### Geometry
 
 ```cpp
-// 经纬度球面最短距离
+// Great-circle distance on the sphere
 // Voleking
 ld Dist(ld la1, ld lo1, ld la2, ld lo2, ld R) {
     la1 *= PI / 180, lo1 *= PI / 180, la2 *= PI / 180, lo2 *= PI / 180;
@@ -911,24 +911,24 @@ ld Dist(ld la1, ld lo1, ld la2, ld lo2, ld R) {
 int cmp(ld k1, ld k2) {
     return sgn(k1 - k2);
 }
-V proj(V k1, V k2, V q) { // q 到直线 k1,k2 的投影 
+V proj(V k1, V k2, V q) { // Projection of point q onto line k1,k2
     V k = k2 - k1;
     return k1 + k * (dot(q - k1, k) / k.abs2());
 }
 V reflect(V k1, V k2, V q) {
     return proj(k1, k2, q) * 2 - q;
 }
-int clockwise(V k1, V k2, V k3) { // k1 k2 k3 逆时针 1 顺时针 -1 否则 0  
+int clockwise(V k1, V k2, V k3) { // k1 k2 k3 counterclockwise 1 clockwise -1 otherwise 0  
     return sgn(det(k2 - k1, k3 - k1));
 }
-int checkLL(V k1, V k2, V k3, V k4) { // 求直线 (L) 线段 (S) k1,k2 和 k3,k4 的交点 
+int checkLL(V k1, V k2, V k3, V k4) { // Check the intersection point of line (L) and segment (S) k1,k2 and k3,k4
     return cmp(det(k3 - k1, k4 - k1), det(k3 - k2, k4 - k2)) != 0;
 }
 V getLL(V k1, V k2, V k3, V k4) {
     ld w1 = det(k1 - k3, k4 - k3), w2 = det(k4 - k3, k2 - k3);
     return (k1 * w2 + k2 * w1) / (w1 + w2);
 }
-vector<line> getHL(vector<line>& L) { // 求半平面交, 半平面是逆时针方向, 输出按照逆时针
+vector<line> getHL(vector<line>& L) { // Get the half-plane intersection, the half-plane is counterclockwise, and the output is counterclockwise
     sort(L.begin(), L.end());
     deque<line> q;
     for (int i = 0; i < (int) L.size(); i++) {
@@ -943,7 +943,7 @@ vector<line> getHL(vector<line>& L) { // 求半平面交, 半平面是逆时针�
     for (int i = 0; i < q.size(); i++) ans.push_back(q[i]);
     return ans;
 }
-int checkposCC(circle k1, circle k2) { // 返回两个圆的公切线数量
+int checkposCC(circle k1, circle k2) { // Return the number of common tangent lines of two circles
     if (cmp(k1.r, k2.r) == -1) swap(k1, k2);
     ld dis = k1.o.dis(k2.o);
     int w1 = cmp(dis, k1.r + k2.r), w2 = cmp(dis, k1.r - k2.r);
@@ -953,7 +953,7 @@ int checkposCC(circle k1, circle k2) { // 返回两个圆的公切线数量
     else if (w2 == 0) return 1;
     else return 0;
 }
-vector<V> getCL(circle k1, V k2, V k3) { // 沿着 k2->k3 方向给出, 相切给出两个 
+vector<V> getCL(circle k1, V k2, V k3) { // Given k2->k3 direction, give out p, the two tangent points
     V k = proj(k2, k3, k1.o);
     ld d = k1.r * k1.r - (k - k1.o).abs2();
     if (sgn(d) == -1) return {};
@@ -1016,7 +1016,7 @@ ld convexDiameter(vector<V> A) {
     }
     return ans;
 }
-vector<V> convexcut(vector<V> A, V k1, V k2) { // 保留 k1,k2,p 逆时针的所有点
+vector<V> convexcut(vector<V> A, V k1, V k2) { // Keep points k1,k2,p counterclockwise
     int n = A.size();
     A.push_back(A[0]);
     vector<V> ans;
@@ -1029,7 +1029,7 @@ vector<V> convexcut(vector<V> A, V k1, V k2) { // 保留 k1,k2,p 逆时针的所
 }
 ```
 
-### 找不到想要的？
+### References
 
 [Nyaan's Library](https://nyaannyaan.github.io/library/)
 [F0RE1GNERS](https://github.com/F0RE1GNERS/template)
