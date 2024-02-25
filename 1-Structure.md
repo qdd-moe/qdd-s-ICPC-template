@@ -61,7 +61,7 @@ struct dsu {
 };
 ```
 
-### Range Minimum Query (RMQ)
+### Range Maximum Query (RMQ)
 
 + 1D
 
