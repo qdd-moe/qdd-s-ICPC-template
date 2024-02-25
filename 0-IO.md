@@ -1,6 +1,6 @@
-## 输入 & 输出
+## Input & Output
 
-### 特殊格式
+### Special Formats
 
 ```cpp
 long double %Lf
@@ -10,7 +10,7 @@ unsigned long long %llu
 cout << fixed << setprecision(15);
 ```
 
-### 文件和流同步
+### File and Stream Synchronization
 
 ```cpp
 freopen("in.txt", "r", stdin);
@@ -19,20 +19,20 @@ ios::sync_with_stdio(false);
 cin.tie(0);
 ```
 
-### 程序计时
+### Program Timing
 
 ```cpp
 (double)clock() / CLOCKS_PER_SEC
 ```
 
-### 整行读入
+### Read Whole Line
 
 ```cpp
-scanf("%[^\n]", s)  // 需测试是否可用
+scanf("%[^\n]", s)  // Need to test if usable
 getline(cin, s)
 ```
 
-### 读到文件尾
+### Read Until End of File
 
 ```cpp
 while (cin) {}
@@ -42,7 +42,7 @@ while (~scanf) {}
 ### int128
 
 ```cpp
-// 需测试是否可用
+// Need to test if usable
 istream& operator>>(istream& is, __int128& x) {
   string s;
   is >> s;
@@ -63,7 +63,7 @@ ostream& operator<<(ostream& os, __int128 x) {
 }
 ```
 
-### 读入挂
+### Reading with Buffer
 
 ```cpp
 class Scanner {

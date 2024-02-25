@@ -1,6 +1,6 @@
-## 图论
+## Graph Theory
 
-### 链式前向星
+### Adjacency List
 
 ```cpp
 int ecnt, mp[N];
@@ -23,7 +23,7 @@ void mp_link(int u, int v) {
 for (int i = mp[u]; i != -1; i = es[i].nxt)
 ```
 
-### 最短路
+### Shortest Path
 
 + Dijkstra
 
@@ -65,7 +65,7 @@ struct Dijkstra {
 };
 ```
 
-+ SPFA
++ Bellman-Ford
 
 ```cpp
 struct SPFA {
@@ -108,10 +108,10 @@ struct SPFA {
 };
 ```
 
-+ Floyd 最小环
++ Floyd, with Shortest Cycle
 
 ```cpp
-// 注意 INF 不能超过 1/3 LLONG_MAX
+// Note: INF should not exceed 1/3 LLONG_MAX
 for (int k = 0; k < n; k++) {
   for (int i = 0; i < k; i++) {
     for (int j = 0; j < i; j++) {
@@ -126,7 +126,7 @@ for (int k = 0; k < n; k++) {
 }
 ```
 
-### 拓扑排序
+### Topological Sorting
 
 ```cpp
 int n, deg[N], dis[N];
@@ -154,10 +154,10 @@ bool topo(vector<int>& ans) {
 }
 ```
 
-### 最小生成树
+### Minimum Spanning Tree
 
 ```cpp
-// 前置：并查集
+// Prerequisite: Disjoint Set Union
 struct Edge {
   int u, v, w;
   Edge(int u = 0, int v = 0, int w = 0) : u(u), v(v), w(w) {}
@@ -176,7 +176,7 @@ i64 kruskal(vector<Edge>& es, int n) {
 }
 ```
 
-### LCA
+### Lowest Common Ancestor
 
 ```cpp
 // dfs(1, 0) or dfs(0, n), don't use dfs(0, -1)
@@ -211,9 +211,9 @@ int lca(int u, int v) {
 }
 ```
 
-### 网络流
+### Network Flow
 
-+ 最大流
++ Max Flow
 
 ```cpp
 const int INF = 0x7fffffff;
@@ -284,7 +284,7 @@ struct Dinic {
 };
 ```
 
-+ 最小费用流
++ Minimum Cost Flow
 
 ```cpp
 const i64 INF = 1e15;
@@ -355,7 +355,7 @@ struct MCMF {
 };
 ```
 
-### 无向图最小割
+### Minimum Cut of Undirected Graph
 
 ```cpp
 namespace stoer_wagner {
@@ -415,10 +415,10 @@ namespace stoer_wagner {
 }
 ```
 
-### 树链剖分
+### Heavy-Light Decomposition
 
 ```cpp
-// 点权
+// weights on vertices
 vector<int> g[N];
 int pa[N], sz[N], dep[N], dfn[N], maxc[N], top[N], clk;
 
@@ -475,7 +475,7 @@ i64 go(int u, int v) {
 
 ### Tarjan
 
-+ 割点
++ Cut Points
 
 ```cpp
 int dfn[N], low[N], clk;
@@ -497,7 +497,7 @@ void tarjan(int u, int pa) {
 }
 ```
 
-+ 桥
++ Bridges
 
 ```cpp
 int dfn[N], low[N], clk;
@@ -518,7 +518,7 @@ void tarjan(int u, int pa) {
 }
 ```
 
-+ 强连通分量缩点
++ Strongly Connected Components (SCC)
 
 ```cpp
 int dfn[N], low[N], clk, tot, color[N];
@@ -556,7 +556,7 @@ void tarjan(int u) {
 + 2-SAT
 
 ```cpp
-// N 开两倍
+// N doubled
 void two_sat() {
   for (int i = 1; i <= n * 2; i++) {
     if (!dfn[i]) tarjan(i);
@@ -574,9 +574,9 @@ void two_sat() {
 }
 ```
 
-### 欧拉路径
+### Eulerian Path
 
-+ 无向图
++ Undirected Graph
 
 ```cpp
 vector<int> euler_path(int s) {
@@ -600,7 +600,7 @@ vector<int> euler_path(int s) {
 }
 ```
 
-+ 有向图
++ Directed Graph
 
 ```cpp
 vector<int> euler_path(int s) {
@@ -624,12 +624,12 @@ vector<int> euler_path(int s) {
 }
 ```
 
-### 支配树
+### Dominator Tree
 
-+ 有向无环图
++ Directed Acyclic Graph (DAG)
 
 ```cpp
-// rt是g中入度为0的点（可能需要建超级源点）
+// rt is a point in g with in-degree 0 (may need to create a super source point)
 const int LOG = 22;
 int n, deg[N], dep[N], up[N][LOG];
 vector<int> g[N], rg[N], dt[N];
@@ -684,7 +684,7 @@ void go(int rt) {
 }
 ```
 
-+ 一般有向图
++ General Directed Graph
 
 ```cpp
 vector<int> g[N], rg[N];
@@ -727,7 +727,7 @@ namespace tl {
     for (int i = clk; i > 1; i--) {
       int x = rdfn[i], mn = clk + 1;
       for (int& u : rg[x]) {
-        if (!dfn[u]) continue; // 可能不能到达所有点
+        if (!dfn[u]) continue; // may not reach all vertices
         fix(u);
         mn = min(mn, dfn[sdom[best[u]]]);
       }

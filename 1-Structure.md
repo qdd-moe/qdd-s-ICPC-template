@@ -1,8 +1,8 @@
-## 数据结构
+## Data Structures
 
 **Unless specified, all data structure interfaces are 0-indexed, [l, r]**
 
-### 并查集
+### Disjoint Set Union (DSU)
 
 ```cpp
 struct dsu {
@@ -19,7 +19,7 @@ struct dsu {
 };
 ```
 
-+ 动态开点并查集
++ Dynamic Allocation DSU
 
 ```cpp
 unordered_map<int, int> pa;
@@ -36,7 +36,7 @@ void merge(int x, int y) {
 }
 ```
 
-+ 可回滚并查集
++ Rollback DSU
 
 ```cpp
 struct dsu {
@@ -61,9 +61,9 @@ struct dsu {
 };
 ```
 
-### RMQ
+### Range Minimum Query (RMQ)
 
-+ 一维
++ 1D
 
 ```cpp
 struct RMQ {
@@ -89,7 +89,7 @@ struct RMQ {
 };
 ```
 
-+ 二维
++ 2D
 
 ```cpp
 struct RMQ {
@@ -129,14 +129,14 @@ struct RMQ {
 };
 ```
 
-+ 滑动窗口 RMQ
++ Sliding Window RMQ
 
 ```cpp
-// k 为滑动窗口的大小
+// k is the size of the sliding window
 deque<int> q;
 for (int i = 0, j = 0; i + k <= n; i++) {
   while (j < i + k) {
-    while (!q.empty() && a[q.back()] < a[j]) q.pop_back(); // 最小值取'>'号
+    while (!q.empty() && a[q.back()] < a[j]) q.pop_back(); // Change '<' to '>' for minimum
     q.push_back(j++);
   }
   while (q.front() < i) q.pop_front();
@@ -144,9 +144,9 @@ for (int i = 0, j = 0; i + k <= n; i++) {
 }
 ```
 
-### 树状数组
+### Fenwick Tree (Binary Indexed Tree)
 
-+ 单点修改，区间和
++ Point Update, Range Sum
 
 ```cpp
 template <class T>
@@ -180,7 +180,7 @@ struct fenwick {
 };
 ```
 
-+ 区间加，单点查询
++ Range Update, Point Query
 
 ```cpp
 void range_add(int l, int r, i64 x) {
@@ -189,7 +189,7 @@ void range_add(int l, int r, i64 x) {
 }
 ```
 
-+ 区间加，区间和
++ Range Update, Range Sum
 
 ```cpp
 fenwick t1, t2;
@@ -206,7 +206,7 @@ i64 range_sum(int l, int r) {
 }
 ```
 
-+ 二维
++ 2D
 
 ```cpp
 template <class T>
@@ -234,7 +234,7 @@ struct fenwick_2d {
 };
 ```
 
-+ 二维区间加，区间和
++ 2D Range Update, Range Sum
 
 ```cpp
 fenwick t0, t1, t2, t3;
@@ -265,9 +265,9 @@ i64 range_sum(int x, int y, int xx, int yy) {
 }
 ```
 
-### 线段树
+### Segment Tree
 
-+ zkw 线段树
++ ZKW Segment Tree
 
 ```cpp
 struct segt {
@@ -292,10 +292,10 @@ struct segt {
 };
 ```
 
-+ 单点修改，RMQ
++ Single Point Modification, Range Maximum Query (RMQ)
 
 ```cpp
-// 必要时使用 const S& 卡常数
+// Use const S& when necessary to optimize constants
 template <class S>
 struct segtree {
   using OP = S (*)(S, S);
@@ -392,7 +392,7 @@ auto e = []() { return -INF; };
 segtree<int> seg(n, op, e);
 ```
 
-+ 区间加，区间和
++ Range Addition, Range Sum
 
 ```cpp
 template <class S, class F>
@@ -474,7 +474,7 @@ struct lazy_segtree {
   void update(int l, int r, F f) { modify(l, r, f, 1, 0, size - 1); }
   S query(int l, int r) { return ask(l, r, 1, 0, size - 1); }
 
-  // for binary search
+  // For binary search
   void push(int p) {
     int x = __lg(p), y = size >> x, z = p - (1 << x);
     push(p, y * z + 1, y * (z + 1));
@@ -535,13 +535,13 @@ struct lazy_segtree {
 auto op = [](i64 a, i64 b) { return a + b; };
 auto e = []() { return 0LL; };
 auto mapping = [](i64 a, i64 f, int l, int r) { return a + f * (r - l + 1); };
-auto composition = [](i64 f, i64 g) { return f + g; };  // f：外层函数 g：内层函数
-auto id = []() { return 0LL; };  // 如果是区间赋值，选取一个数据范围外的值
+auto composition = [](i64 f, i64 g) { return f + g; };  // f: outer function, g: inner function
+auto id = []() { return 0LL; };  // For interval assignment, choose a value outside the data range
 
 lazy_segtree<i64, i64> seg(n, op, e, mapping, composition, id);
 ```
 
-+ 区间乘混加，区间和取模
++ Range Multiplication and Addition, Range Sum Modulo
 
 ```cpp
 // S = i64, F = pair<i64, i64>
@@ -552,7 +552,7 @@ F composition(F f, F g) { return F{(g.first * f.first) % P, (g.second * f.first 
 F id() { return F{1, 0}; }
 ```
 
-### 动态开点线段树
+### Dynamic Segment Tree
 
 ```cpp
 struct Node {
@@ -599,13 +599,13 @@ struct SegT {
 };
 ```
 
-### 主席树
+### Functional Segment Tree
 
 ```cpp
 struct Node {
   int lc, rc, val;
   Node(int lc = 0, int rc = 0, int val = 0) : lc(lc), rc(rc), val(val) {}
-} t[40 * MAXN]; // (4 + log(size)) * MAXN 小心 MLE
+} t[40 * MAXN]; // Be careful with MLE: (4 + log(size)) * MAXN
 
 int cnt;
 
@@ -654,7 +654,7 @@ struct FST {
 ### pb_ds
 
 ```cpp
-// 平衡树
+// Balanced Tree
 #include <ext/pb_ds/assoc_container.hpp>
 using namespace __gnu_pbds;
 template<class T>
@@ -673,7 +673,7 @@ void example() {
   t.join(t2);  // assuming T < T2 or T > T2, merge t2 into t
 }
 
-// 优先队列
+// Priority Queue
 #include <ext/pb_ds/priority_queue.hpp>
 using namespace __gnu_pbds;
 template<class T, class Cmp = less<T> >
@@ -692,7 +692,7 @@ void example() {
 ### Splay
 
 ```cpp
-// 正常Splay
+// Normal Splay
 struct Node {
   int val, size;
   Node *pa, *lc, *rc;
@@ -741,8 +741,8 @@ struct Splay {
 ### Treap
 
 ```cpp
-// split_x 左侧元素 < x
-// split_k 左侧分割出 k 个元素
+// split_x: elements on the left are < x
+// split_k: split out k elements on the left
 namespace tr {
   using uint = unsigned int;
 
@@ -809,10 +809,10 @@ namespace tr {
 }
 ```
 
-### 珂朵莉树
+### Interval Set
 
 ```cpp
-// for Q assign operation it takes Qlogn time in total
+// For Q assign operation it takes Qlogn time in total
 template <class T>
 struct interval_set {
   map<pair<int, int>, T> mp;  // {r,l}=val
@@ -850,9 +850,9 @@ struct interval_set {
 };
 ```
 
-### CDQ 分治
+### CDQ Divide and Conquer
 
-+ 三维偏序（不严格）
++ Three-dimensional partial order (non-strict)
 
 ```cpp
 struct Node {
@@ -900,7 +900,7 @@ void go() {
 }
 ```
 
-### 莫队
+### Mo's Algorithm
 
 ```cpp
 int unit = max(1, int(n / sqrt(q)));
