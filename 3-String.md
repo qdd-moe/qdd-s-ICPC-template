@@ -1,6 +1,6 @@
-## 字符串
+## Strings
 
-### 哈希
+### Hash
 
 ```cpp
 // open hack
@@ -36,7 +36,7 @@ vector<i64> Hash::pw;
 int _ = (Hash::init(1e6), 0);
 ```
 
-+ 二维哈希
++ 2D Hash
 
 ```cpp
 const i64 basex = 239, basey = 241, p = 998244353;
@@ -76,7 +76,7 @@ struct Hash2D {
 };
 ```
 
-+ 动态哈希
++ Dynamic Hash
 
 ```cpp
 const i64 MAGIC = 479;
@@ -212,8 +212,8 @@ struct Manacher {
 ### KMP
 
 ```cpp
-// 前缀函数（每一个前缀的最长公共前后缀）
-// [0...i] 的最小循环节是 i + 1 - a[i]
+// prefix function (the longest common prefix and suffix for each prefix)
+// the smallest cycle of [0...i] is i + 1 - a[i]
 vector<int> get_pi(const string& s) {
   int n = s.size();
   vector<int> a(n);
@@ -238,14 +238,14 @@ struct KMP {
       if (s[j] == t[i]) j++;
       if (j == s.size()) {
         res.push_back(i - j + 1);
-        j = a[j - 1]; // 允许重叠匹配 j = 0 不允许
+        j = a[j - 1]; // Allowing overlapping matches j = 0 not allowed
       }
     }
     return res;
   }
 };
 
-// Z函数（每一个后缀和该字符串的最长公共前缀）
+// Z function, z[i] = LCP(s, s[i:])
 vector<int> get_z(const string& s) {
   int n = s.size(), l = 0, r = 0;
   vector<int> z(n);
@@ -261,7 +261,7 @@ vector<int> get_z(const string& s) {
 }
 ```
 
-### Lyndon 分解
+### Lyndon Decomposition
 
 ```cpp
 vector<string> duval(const string& s) {
@@ -283,7 +283,7 @@ vector<string> duval(const string& s) {
 }
 ```
 
-### 最小表示法
+### Lexicographically Minimal String Rotation
 
 ```cpp
 int get(const string& s) {
@@ -323,7 +323,7 @@ struct Trie {
   }
 };
 
-// 正常Trie
+// Normal Trie
 struct Trie {
   int t[N][26], sz, cnt[N];
 
@@ -345,7 +345,7 @@ struct Trie {
 };
 ```
 
-### AC 自动机
+### Aho-Corasick Automaton
 
 ```cpp
 struct ACA {
@@ -392,25 +392,25 @@ struct ACA {
 };
 ```
 
-### 回文自动机
+### Palindromic Tree
 
 ```cpp
 // WindJ0Y
 struct Palindromic_Tree {
   static constexpr int N = 300005;
 
-  int next[N][26]; // next指针，next指针和字典树类似，指向的串为当前串两端加上同一个字符构成
-  int fail[N]; // fail指针，失配后跳转到fail指针指向的节点
-  int cnt[N]; // 表示节点i表示的本质不同的串的个数 after count()
-  int num[N]; // 表示以节点i表示的最长回文串的最右端点为回文串结尾的回文串个数。
-  int len[N]; // len[i]表示节点i表示的回文串的长度
+  int next[N][26]; // next pointer, similar to trie, points to the string formed by adding the same character at the beginning and end of the current string
+  int fail[N]; // fail pointer, jumps to the node pointed to by fail pointer after mismatch
+  int cnt[N]; // represents the number of different essential strings represented by node i after count()
+  int num[N]; // represents the number of palindrome strings with the last character of the palindrome string represented by node i as the end of the palindrome string.
+  int len[N]; // len[i] represents the length of the palindrome string represented by node i
   int lcnt[N];
-  int S[N]; // 存放添加的字符
-  int last; // 指向上一个字符所在的节点，方便下一次add
-  int n; // 字符数组指针
-  int p; // 节点指针
+  int S[N]; // Store the added characters
+  int last; // Points to the node where the last character is located for easy addition next time
+  int n; // Character array pointer
+  int p; // Node pointer
 
-  int newnode(int l, int vc) { // 新建节点
+  int newnode(int l, int vc) { // Create a new node
     for (int i = 0; i < 26; ++i) next[p][i] = 0;
     cnt[p] = 0;
     num[p] = 0;
@@ -419,27 +419,27 @@ struct Palindromic_Tree {
     return p++;
   }
 
-  void init() { // 初始化
+  void init() { // Initialize
     p = 0;
     newnode(0, 0);
     newnode(-1, 0);
     last = 0;
     n = 0;
-    S[n] = -1; // 开头放一个字符集中没有的字符，减少特判
+    S[n] = -1; // Put a character not in the character set at the beginning to reduce special cases
     fail[0] = 1;
   }
 
-  int get_fail(int x) { // 和KMP一样，失配后找一个尽量最长的
+  int get_fail(int x) { // Similar to KMP, find the longest one after mismatch
     while (S[n - len[x] - 1] != S[n]) x = fail[x];
     return x;
   }
 
   void add(int c) {
     S[++n] = c;
-    int cur = get_fail(last); // 通过上一个回文串找这个回文串的匹配位置
-    if (!next[cur][c]) { // 如果这个回文串没有出现过，说明出现了一个新的本质不同的回文串
-      int now = newnode(len[cur] + 2, lcnt[cur] | (1 << c)); // 新建节点
-      fail[now] = next[get_fail(fail[cur])][c]; // 和AC自动机一样建立fail指针，以便失配后跳转
+    int cur = get_fail(last); // Find the matching position of this palindrome string through the last palindrome string
+    if (!next[cur][c]) { // If this palindrome string has not appeared, it means a new essential different palindrome string has appeared
+      int now = newnode(len[cur] + 2, lcnt[cur] | (1 << c)); // Create a new node
+      fail[now] = next[get_fail(fail[cur])][c]; // Establish a fail pointer as in AC automation, so as to jump after mismatch
       next[cur][c] = now;
       num[now] = num[fail[now]] + 1;
     }
@@ -449,16 +449,16 @@ struct Palindromic_Tree {
 
   void count() {
     for (int i = p - 1; i >= 0; --i) cnt[fail[i]] += cnt[i];
-    // 父亲累加儿子的cnt，因为如果fail[v]=u，则u一定是v的子回文串
+    // Parent node accumulates child node's cnt, because if fail[v]=u, then u must be v's child palindrome string
   }
 } pt;
 ```
 
-### 后缀自动机
+### Suffix Automaton
 
 ```cpp
-// 下标从 1 开始
-// rsort 中的数组 a 是拓扑序 [1, sz)
+// 1-indexed
+// the array a in rsort is the topological order [1, sz)
 struct SAM {
   static constexpr int M = N << 1;
   int t[M][26], len[M], fa[M], sz = 2, last = 1;
@@ -498,10 +498,10 @@ struct SAM {
 };
 ```
 
-+ 广义后缀自动机（在线版）
++ Multiple Strings, Online Construction
 
 ```cpp
-// 插入新串前 置 last 为 1
+// set last to 1 before inserting a new string
 struct SAM {
   static constexpr int M = N << 1;
   int t[M][26], len[M], fa[M], sz = 2, last = 1;
@@ -537,12 +537,12 @@ struct SAM {
 };
 ```
 
-### 后缀数组
+### Suffix Array
 
 ```cpp
-// 下标从0开始
-// sa[i]: 排名为i的后缀位置
-// rk[i]: 第i个后缀的排名
+// 0-indexed
+// sa[i]: position of the suffix with rank i
+// rk[i]: rank of the i-th suffix
 // lc[i]: LCP(sa[i], sa[i + 1])
 struct SuffixArray {
   int n;
