@@ -1,4 +1,4 @@
-## 数学
+## Mathematics
 
 ### GCD & LCM
 
@@ -7,10 +7,10 @@ i64 gcd(i64 a, i64 b) { return b ? gcd(b, a % b) : a; }
 i64 lcm(i64 a, i64 b) { return a / gcd(a, b) * b; }
 ```
 
-### 快速乘 & 快速幂
+### Safe Multiplication & Fast Exponentiation
 
 ```cpp
-// 模数爆int时使用
+// Use if modulus exceeds INT_MAX
 i64 mul(i64 a, i64 b, i64 p) {
   i64 ans = 0;
   for (a %= p; b; b >>= 1, a = (a << 1) % p)
@@ -30,7 +30,7 @@ i64 qk(i64 a, i64 b, i64 p) {
   return ans;
 }
 
-// 爆int
+// If modulus exceeds INT_MAX
 i64 qk(i64 a, i64 b, i64 p) {
   i64 ans = 1 % p;
   for (a %= p; b; b >>= 1, a = mul(a, a, p))
@@ -38,7 +38,7 @@ i64 qk(i64 a, i64 b, i64 p) {
   return ans;
 }
 
-// 十进制快速幂
+// Decimal fast exponentiation
 i64 qk(i64 a, const string& b, i64 p) {
   i64 ans = 1;
   for (int i = b.size() - 1; i >= 0; i--) {
@@ -49,7 +49,7 @@ i64 qk(i64 a, const string& b, i64 p) {
 }
 ```
 
-### 矩阵快速幂
+### Matrix Fast Exponentiation
 
 ```cpp
 const int M_SZ = 3;
@@ -86,7 +86,7 @@ Mat qk(Mat a, i64 b, i64 p) {
   return ans;
 }
 
-// 十进制快速幂
+// Decimal fast exponentiation
 Mat qk(Mat a, const string& b, i64 p) {
   Mat ans; one(ans);
   for (int i = b.size() - 1; i >= 0; i--) {
@@ -99,7 +99,7 @@ Mat qk(Mat a, const string& b, i64 p) {
 #undef rep2
 ```
 
-### 素数判断
+### Prime Test
 
 ```cpp
 bool isprime(int x) {
@@ -111,7 +111,7 @@ bool isprime(int x) {
 }
 ```
 
-### 线性筛
+### Sieves
 
 ```cpp
 struct sieve {
@@ -150,7 +150,7 @@ struct sieve {
 };
 ```
 
-### 区间筛
+### Interval Sieve
 
 ```cpp
 // a, b <= 1e13, b - a <= 1e6
@@ -176,7 +176,7 @@ void get_prime(i64 a, i64 b) {
 }
 ```
 
-### 找因数
+### Find Factors
 
 ```cpp
 // O(sqrt(n))
@@ -193,7 +193,7 @@ vector<int> getf(int x) {
 }
 ```
 
-### 找质因数
+### Prime Factorization
 
 ```cpp
 // O(sqrt(n))
@@ -210,7 +210,7 @@ vector<pair<int, int>> getf(int x) {
   return v;
 }
 
-// 前置：线性筛
+// Prerequisite: Sieves
 // O(logn)
 vector<pair<int, int>> getf(int x) {
   vector<pair<int, int>> v;
@@ -237,7 +237,7 @@ i64 qk(i64 a, i64 b, i64 p) {
 }
 
 // O(logn)
-// int范围只需检查2, 7, 61
+// Only need to check 2, 7, 61 for 32-bit ints
 bool isprime(i64 n) {
   if (n < 3) return n == 2;
   if (!(n & 1)) return false;
@@ -288,10 +288,10 @@ vector<pair<i64, int>> getf(i64 x) {
 }
 ```
 
-### 欧拉函数
+### Euler's Totient Function
 
 ```cpp
-// 前置：找质因数
+// Prerequisite: Prime Factorization
 int phi(int x) {
   int ret = x;
   for (auto& [f, _] : getf(x)) ret = ret / f * (f - 1);
@@ -299,7 +299,7 @@ int phi(int x) {
 }
 ```
 
-### EXGCD
+### Extended Euclidean Algorithm
 
 ```cpp
 // ax + by = gcd(a, b)
@@ -311,7 +311,7 @@ array<i64, 3> exgcd(i64 a, i64 b) {
 }
 ```
 
-### 类欧几里得
+### Euclidean-like Functions
 
 ```cpp
 // f(a,b,c,n) = ∑(i=[0,n]) (ai+b)/c
@@ -366,20 +366,20 @@ i64 h(i64 a, i64 b, i64 c, i64 n) {
 }
 ```
 
-### 逆元
+### Modular Inverse
 
 ```cpp
 i64 inv(i64 x) { return qk(x, P - 2, P); }
 
 // EXGCD
-// gcd(a, p) = 1时有逆元
+// Inverse exists iff gcd(a, p) = 1
 i64 inv(i64 a, i64 p) {
   auto [d, x, y] = exgcd(a, p);
   if (d == 1) return (x % p + p) % p;
   return -1;
 }
 
-// 逆元打表
+// Inverse Table
 i64 inv[N];
 
 void init_inv() {
@@ -390,10 +390,10 @@ void init_inv() {
 }
 ```
 
-### 组合数
+### Binomial Coefficient
 
 ```cpp
-// 组合数打表
+// Pascal's Triangle
 i64 C[N][N];
 
 void initC() {
@@ -406,8 +406,8 @@ void initC() {
   }
 }
 
-// 快速组合数取模
-// MAXN开2倍上限
+// Fast Binomial Coefficient
+// For combination with repetition, N needs to be 2x
 i64 fac[N], ifac[N];
 
 void init_inv() {
@@ -426,21 +426,21 @@ i64 C(int n, int m) {
   return fac[n] * ifac[m] % P * ifac[n - m] % P;
 }
 
-// Lucas
+// Lucas Theorem
 i64 C(i64 n, i64 m) {
   if (n < m || m < 0) return 0;
   if (n < P && m < P) return fac[n] * ifac[m] % P * ifac[n - m] % P;
   return C(n / P, m / P) * C(n % P, m % P) % P;
 }
 
-// 可重复组合数
+// Combination with repetition
 i64 H(int n, int m) { return C(n + m - 1, m); }
 ```
 
-### 康托展开
+### Cantor Expansion
 
 ```cpp
-// 需要预处理阶乘
+// Requires pre-processing of factorials
 int cantor(vector<int>& s) {
   int n = s.size(), ans = 0;
   for (int i = 0; i < n - 1; i++) {
@@ -469,12 +469,12 @@ vector<int> inv_cantor(int x, int n) {
 }
 ```
 
-### 高斯消元
+### Gauss-Jordan elimination
 
-+ 浮点数版本
++ Floating-point version
 
 ```cpp
-// n 方程个数，m 变量个数，a 是 n*(m+1) 的增广矩阵
+// n: number of equations, m: number of variables, a: augmented matrix of size n*(m+1)
 const double EPS = 1e-8;
 
 int gauss(vector<vector<double>> a, vector<double>& ans) {
@@ -513,12 +513,12 @@ int gauss(vector<vector<double>> a, vector<double>& ans) {
     if (abs(sum - a[i][m]) > EPS) return -1;  // no solution
   }
   for (int i = 0; i < m; i++)
-    if (pos[i] == -1) return 2;  // infinte solutions
+    if (pos[i] == -1) return 2;  // infinite solutions
   return 1;  // unique solution
 }
 ```
 
-+ 异或方程组
++ XOR Equations
 
 ```cpp
 const int N = 2010;
@@ -542,12 +542,12 @@ int gauss(int n, int m, vector<bitset<N>> a, bitset<N>& ans) {
   for (int i = 0; i < n; i++)
     if (((ans & a[i]).count() & 1) != a[i][m]) return -1;  // no solution
   for (int i = 0; i < m; i++)
-    if (pos[i] == -1) return 2;  // infinte solutions
+    if (pos[i] == -1) return 2;  // infinite solutions
   return 1;  // unique solution
 }
 ```
 
-### 线性基
+### Linear Basis
 
 ```cpp
 struct Basis {
@@ -581,10 +581,10 @@ struct Basis {
 };
 ```
 
-### 中国剩余定理
+### Chinese Remainder Theorem
 
 ```cpp
-// 前置：exgcd
+// Prerequisite: exgcd
 i64 excrt(vector<i64>& m, vector<i64>& r) {
   i64 M = m[0], R = r[0];
   for (int i = 1; i < m.size(); i++) {
@@ -599,10 +599,10 @@ i64 excrt(vector<i64>& m, vector<i64>& r) {
 }
 ```
 
-### 原根
+### Primitive Root
 
 ```cpp
-// 前置：找质因数
+// Prerequisite: Prime Factorization
 i64 primitive_root(i64 p) {
   vector<pair<i64, int>> facs = getf(p - 1);
   for (i64 i = 2; i < p; i++) {
@@ -619,10 +619,10 @@ i64 primitive_root(i64 p) {
 }
 ```
 
-### 离散对数
+### Baby Step Giant Step
 
 ```cpp
-// a ^ x = b (mod p)，要求模数为素数
+// a^x = b (mod p), where p is a prime number
 i64 BSGS(i64 a, i64 b, i64 p) {
   a %= p;
   if (!a && !b) return 1;
@@ -642,7 +642,7 @@ i64 BSGS(i64 a, i64 b, i64 p) {
   return -1;
 }
 
-// 模数可以非素数
+// Modulus can be non-prime
 i64 exBSGS(i64 a, i64 b, i64 p) {
   a %= p; b %= p;
   if (a == 0) return b > 1 ? -1 : (b == 0 && p != 1);
@@ -668,17 +668,17 @@ i64 exBSGS(i64 a, i64 b, i64 p) {
   return -1;
 }
 
-// 已知 x, b, p，求 a
+// Given x, b, p, find a
 i64 SGSB(i64 x, i64 b, i64 p) {
   i64 g = primitive_root(p);
   return qk(g, BSGS(qk(g, x, p), b, p), p);
 }
 ```
 
-### 数论分块
+### Number Theory Block
 
 ```cpp
-// floor(n/i)=v 时 i 的取值范围是 [l,r]
+// When floor(n/i) = v, the range of i is [l,r]
 vector<array<i64, 3>> quotients(i64 n) {
   vector<array<i64, 3>> res;
   i64 h = sqrt(n);
@@ -692,7 +692,7 @@ vector<array<i64, 3>> quotients(i64 n) {
 }
 ```
 
-### 二次剩余
+### Quadratic Residue
 
 ```cpp
 i64 Quadratic_residue(i64 a) {
@@ -821,7 +821,7 @@ void fwt(vector<i64>& a, int n, T f) {
 }
 ```
 
-### 自适应Simpson积分
+### Simpson's Numerical Integration
 
 ```cpp
 double simpson(double l, double r) {
@@ -839,7 +839,7 @@ double asr(double l, double r, double eps, double S) {
 double asr(double l, double r) { return asr(l, r, EPS, simpson(l, r)); }
 ```
 
-### BM 线性递推
+### Berlekamp–Massey
 
 ```cpp
 // finding the k-th term is O(n^2 log k)
@@ -904,10 +904,10 @@ namespace BerlekampMassey {
 }
 ```
 
-### 拉格朗日插值
+### Lagrange Interpolation
 
 ```cpp
-// 求 f(x) 的系数表达式，O(n^2)
+// find the coefficients of f(x), O(n^2)
 template <class T>
 vector<T> La(vector<T> x, vector<T> y) {
   int n = x.size();
