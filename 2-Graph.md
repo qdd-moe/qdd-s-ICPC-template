@@ -129,6 +129,7 @@ for (int k = 0; k < n; k++) {
 ### Topological Sorting
 
 ```cpp
+// Use max/min heap for lexicographically largest/smallest
 int n, deg[N], dis[N];
 vector<int> g[N];
 
